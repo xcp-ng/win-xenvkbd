@@ -159,7 +159,7 @@ def shell(command, dir):
     print(dir)
     print(command)
     sys.stdout.flush()
-    
+
     sub = subprocess.Popen(' '.join(command), cwd=dir,
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
@@ -205,6 +205,28 @@ def build_sln(name, release, arch, debug, vs):
 
     msbuild(platform, configuration, 'Build', name + '.sln', '', vs)
 
+def copy_package(name, release, arch, debug, vs):
+    configuration = get_configuration(release, debug)
+
+    if arch == 'x86':
+        platform = 'Win32'
+    elif arch == 'x64':
+        platform = 'x64'
+
+    pattern = '/'.join([vs, ''.join(configuration.split(' ')), platform, 'package', '*'])
+    print('Copying package from %s' % pattern)
+
+    files = glob.glob(pattern)
+
+    dst = os.path.join(name, arch)
+
+    os.makedirs(dst, exist_ok=True)
+
+    for file in files:
+        new = shutil.copy(file, dst)
+        print(new)
+
+    print('')
 
 def remove_timestamps(path):
     try:
@@ -336,9 +358,9 @@ def archive(filename, files, tgz=False):
 
 
 def getVsVersion():
-    vsenv ={} 
-    vars = subprocess.check_output([os.environ['VS']+'\\VC\\vcvarsall.bat', 
-                                        '&&', 'set'], 
+    vsenv ={}
+    vars = subprocess.check_output([os.environ['VS']+'\\VC\\vcvarsall.bat',
+                                        '&&', 'set'],
                                     shell=True)
     for var in vars.splitlines():
         k, _, v = map(str.strip, var.strip().decode('utf-8').partition('='))
@@ -398,8 +420,13 @@ if __name__ == '__main__':
                 'vs2013':'Windows 7',
                 'vs2015':'Windows 8' }
 
+    shutil.rmtree(driver, ignore_errors=True)
+
     build_sln(driver, release[vs], 'x86', debug[sys.argv[1]], vs)
+    copy_package(driver, release[vs], 'x86', debug[sys.argv[1]], vs)
+
     build_sln(driver, release[vs], 'x64', debug[sys.argv[1]], vs)
+    copy_package(driver, release[vs], 'x64', debug[sys.argv[1]], vs)
 
     symstore_add(driver, release[vs], 'x86', debug[sys.argv[1]], vs)
     symstore_add(driver, release[vs], 'x64', debug[sys.argv[1]], vs)
@@ -409,4 +436,3 @@ if __name__ == '__main__':
 
     archive(driver + '\\source.tgz', manifest().splitlines(), tgz=True)
     archive(driver + '.tar', [driver,'revision'])
-
