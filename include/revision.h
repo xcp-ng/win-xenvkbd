@@ -37,9 +37,6 @@
 
 //                    REVISION   H
 #define DEFINE_REVISION_TABLE           \
-    DEFINE_REVISION(0x0800000B,  1),    \
-    DEFINE_REVISION(0x0800000C,  1),    \
-    DEFINE_REVISION(0x0800000D,  1),    \
     DEFINE_REVISION(0x09000000,  1)
 
 #endif  // _REVISION_H
