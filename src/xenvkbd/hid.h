@@ -62,27 +62,11 @@ HidTeardown(
 
 // CALLBACKS
 
-extern VOID
-HidEventMotion(
+extern BOOLEAN
+HidSendReadReport(
     IN  PXENVKBD_HID_CONTEXT    Context,
-    IN  LONG                    dX,
-    IN  LONG                    dY,
-    IN  LONG                    dZ
-    );
-
-extern VOID
-HidEventKeypress(
-    IN  PXENVKBD_HID_CONTEXT    Context,
-    IN  ULONG                   KeyCode,
-    IN  BOOLEAN                 Pressed
-    );
-
-extern VOID
-HidEventPosition(
-    IN  PXENVKBD_HID_CONTEXT    Context,
-    IN  ULONG                   X,
-    IN  ULONG                   Y,
-    IN  LONG                    dZ
+    IN  PVOID                   Buffer,
+    IN  ULONG                   Length
     );
 
 #endif  // _XENVKBD_VKBD_H

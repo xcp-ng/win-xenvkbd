@@ -147,45 +147,10 @@ PdoGetFrontend(
     IN  PXENVKBD_PDO    Pdo
     );
 
-extern PXENBUS_EVTCHN_INTERFACE
-PdoGetEvtchnInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENBUS_DEBUG_INTERFACE
-PdoGetDebugInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENBUS_STORE_INTERFACE
-PdoGetStoreInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENBUS_CACHE_INTERFACE
-PdoGetCacheInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENBUS_GNTTAB_INTERFACE
-PdoGetGnttabInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENBUS_SUSPEND_INTERFACE
-PdoGetSuspendInterface(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
 #include "hid.h"
 
 extern PXENVKBD_HID_CONTEXT
 PdoGetHidContext(
-    IN  PXENVKBD_PDO    Pdo
-    );
-
-extern PXENHID_HID_INTERFACE
-PdoGetHidInterface(
     IN  PXENVKBD_PDO    Pdo
     );
 

@@ -82,4 +82,18 @@ RingNotify(
     IN  PXENVKBD_RING   Ring
     );
 
+extern NTSTATUS
+RingGetInputReport(
+    IN  PXENVKBD_RING   Ring,
+    IN  ULONG           ReportId,
+    IN  PVOID           Buffer,
+    IN  ULONG           Length,
+    OUT PULONG          Returned
+    );
+
+extern VOID
+RingReadReport(
+    IN  PXENVKBD_RING   Ring
+    );
+
 #endif  // _XENVKBD_RING_H

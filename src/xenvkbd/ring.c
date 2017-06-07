@@ -46,6 +46,7 @@
 #include "frontend.h"
 #include "ring.h"
 #include "hid.h"
+#include "vkbd.h"
 #include "thread.h"
 #include "registry.h"
 #include "dbg_print.h"
@@ -77,6 +78,11 @@ struct _XENVKBD_RING {
     BOOLEAN                 Connected;
     BOOLEAN                 Enabled;
     BOOLEAN                 AbsPointer;
+
+    XENVKBD_HID_KEYBOARD    KeyboardReport;
+    XENVKBD_HID_ABSMOUSE    AbsMouseReport;
+    BOOLEAN                 KeyboardPending;
+    BOOLEAN                 AbsMousePending;
 };
 
 #define XENVKBD_RING_TAG    'gniR'
@@ -95,6 +101,174 @@ __RingFree(
     )
 {
     __FreePoolWithTag(Buffer, XENVKBD_RING_TAG);
+}
+
+static FORCEINLINE NTSTATUS
+__RingCopyBuffer(
+    IN  PVOID       Buffer,
+    IN  ULONG       Length,
+    IN  const VOID  *Source,
+    IN  ULONG       SourceLength,
+    OUT PULONG      Returned
+    )
+{
+    if (Buffer == NULL)
+        return STATUS_INVALID_PARAMETER;
+    if (Length < SourceLength)
+        return STATUS_NO_MEMORY;
+
+    RtlCopyMemory(Buffer,
+                  Source,
+                  SourceLength);
+    if (Returned)
+        *Returned = SourceLength;
+    return STATUS_SUCCESS;
+}
+
+static FORCEINLINE LONG
+Constrain(
+    IN  LONG    Value,
+    IN  LONG    Min,
+    IN  LONG    Max
+    )
+{
+    if (Value < Min)
+        return Min;
+    if (Value > Max)
+        return Max;
+    return Value;
+}
+
+static FORCEINLINE UCHAR
+SetBit(
+    IN  UCHAR   Value,
+    IN  UCHAR   BitIdx,
+    IN  BOOLEAN Pressed
+    )
+{
+    if (Pressed) {
+        return Value | (1 << BitIdx);
+    } else {
+        return Value & ~(1 << BitIdx);
+    }
+}
+
+static FORCEINLINE VOID
+SetArray(
+    IN  PUCHAR  Array,
+    IN  ULONG   Size,
+    IN  UCHAR   Value,
+    IN  BOOLEAN Pressed
+    )
+{
+    ULONG       Idx;
+    if (Pressed) {
+        for (Idx = 0; Idx < Size; ++Idx) {
+            if (Array[Idx] == Value)
+                break;
+            if (Array[Idx] != 0)
+                continue;
+            Array[Idx] = Value;
+            break;
+        }
+    } else {
+        for (Idx = 0; Idx < Size; ++Idx) {
+            if (Array[Idx] == 0)
+                break;
+            if (Array[Idx] != Value)
+                continue;
+            for (; Idx < Size - 1; ++Idx)
+                Array[Idx] = Array[Idx + 1];
+            Array[Size - 1] = 0;
+            break;
+        }
+    }
+}
+
+static FORCEINLINE USHORT
+KeyCodeToUsage(
+    IN  ULONG   KeyCode
+    )
+{
+    if (KeyCode < sizeof(VkbdKeyCodeToUsage)/sizeof(VkbdKeyCodeToUsage[0]))
+        return VkbdKeyCodeToUsage[KeyCode];
+    return 0;
+}
+
+static FORCEINLINE VOID
+__RingEventMotion(
+    IN  PXENVKBD_RING   Ring,
+    IN  LONG            dX,
+    IN  LONG            dY,
+    IN  LONG            dZ
+    )
+{
+    Ring->AbsMouseReport.X = (USHORT)Constrain(Ring->AbsMouseReport.X + dX, 0, 32767);
+    Ring->AbsMouseReport.Y = (USHORT)Constrain(Ring->AbsMouseReport.Y + dY, 0, 32767);
+    Ring->AbsMouseReport.dZ = -(CHAR)Constrain(dZ, -127, 127);
+
+    Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
+                                              &Ring->AbsMouseReport,
+                                              sizeof(XENVKBD_HID_ABSMOUSE));
+}
+
+static FORCEINLINE VOID
+__RingEventKeypress(
+    IN  PXENVKBD_RING   Ring,
+    IN  ULONG           KeyCode,
+    IN  BOOLEAN         Pressed
+    )
+{
+    if (KeyCode >= 0x110 && KeyCode <= 0x114) {
+        // Mouse Buttons
+        Ring->AbsMouseReport.Buttons = SetBit(Ring->AbsMouseReport.Buttons,
+                                              (UCHAR)(KeyCode - 0x110),
+                                              Pressed);
+
+        Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
+                                                  &Ring->AbsMouseReport,
+                                                  sizeof(XENVKBD_HID_ABSMOUSE));
+
+    } else {
+        // map KeyCode to Usage
+        USHORT  Usage = KeyCodeToUsage(KeyCode);
+        if (Usage == 0)
+            return; // non-standard key
+
+        if (Usage >= 0xE0 && Usage <= 0xE7) {
+            // Modifier
+            Ring->KeyboardReport.Modifiers = SetBit(Ring->KeyboardReport.Modifiers,
+                                                    (UCHAR)(Usage - 0xE0),
+                                                    Pressed);
+        } else {
+            // Standard Key
+            SetArray(Ring->KeyboardReport.Keys,
+                     6,
+                     (UCHAR)Usage,
+                     Pressed);
+        }
+        Ring->KeyboardPending = HidSendReadReport(Ring->Hid,
+                                                  &Ring->KeyboardReport,
+                                                  sizeof(XENVKBD_HID_KEYBOARD));
+
+    }
+}
+
+static FORCEINLINE VOID
+__RingEventPosition(
+    IN  PXENVKBD_RING   Ring,
+    IN  ULONG           X,
+    IN  ULONG           Y,
+    IN  LONG            dZ
+    )
+{
+    Ring->AbsMouseReport.X = (USHORT)Constrain(X, 0, 32767);
+    Ring->AbsMouseReport.Y = (USHORT)Constrain(Y, 0, 32767);
+    Ring->AbsMouseReport.dZ = -(CHAR)Constrain(dZ, -127, 127);
+
+    Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
+                                              &Ring->AbsMouseReport,
+                                              sizeof(XENVKBD_HID_ABSMOUSE));
 }
 
 __drv_functionClass(KDEFERRED_ROUTINE)
@@ -140,21 +314,21 @@ RingDpc(
 
             switch (in_evt->type) {
             case XENKBD_TYPE_MOTION:
-                HidEventMotion(Ring->Hid,
-                               in_evt->motion.rel_x,
-                               in_evt->motion.rel_y,
-                               in_evt->motion.rel_z);
+                __RingEventMotion(Ring,
+                                  in_evt->motion.rel_x,
+                                  in_evt->motion.rel_y,
+                                  in_evt->motion.rel_z);
                 break;
             case XENKBD_TYPE_KEY:
-                HidEventKeypress(Ring->Hid,
-                                 in_evt->key.keycode,
-                                 in_evt->key.pressed);                        
+                __RingEventKeypress(Ring,
+                                    in_evt->key.keycode,
+                                    in_evt->key.pressed);
                 break;
             case XENKBD_TYPE_POS:
-                HidEventPosition(Ring->Hid,
-                                 in_evt->pos.abs_x,
-                                 in_evt->pos.abs_y,
-                                 in_evt->pos.rel_z);
+                __RingEventPosition(Ring,
+                                    in_evt->pos.abs_x,
+                                    in_evt->pos.abs_y,
+                                    in_evt->pos.rel_z);
                 break;
             case XENKBD_TYPE_MTOUCH:
                 Trace("MTOUCH: %u %u %u %u\n",
@@ -237,6 +411,29 @@ RingDebugCallback(
                  "0x%p [%s]\n",
                  Ring,
                  (Ring->Enabled) ? "ENABLED" : "DISABLED");
+
+    XENBUS_DEBUG(Printf,
+                 &Ring->DebugInterface,
+                 "KBD: %02x %02x %02x %02x %02x %02x %02x %02x%s\n",
+                 Ring->KeyboardReport.ReportId,
+                 Ring->KeyboardReport.Modifiers,
+                 Ring->KeyboardReport.Keys[0],
+                 Ring->KeyboardReport.Keys[1],
+                 Ring->KeyboardReport.Keys[2],
+                 Ring->KeyboardReport.Keys[3],
+                 Ring->KeyboardReport.Keys[4],
+                 Ring->KeyboardReport.Keys[5],
+                 Ring->KeyboardPending ? " PENDING" : "");
+
+    XENBUS_DEBUG(Printf,
+                 &Ring->DebugInterface,
+                 "MOU: %02x %02x %04x %04x %02x%s\n",
+                 Ring->AbsMouseReport.ReportId,
+                 Ring->AbsMouseReport.Buttons,
+                 Ring->AbsMouseReport.X,
+                 Ring->AbsMouseReport.Y,
+                 Ring->AbsMouseReport.dZ,
+                 Ring->AbsMousePending ? " PENDING" : "");
 }
 
 NTSTATUS
@@ -341,6 +538,8 @@ RingConnect(
     if (!NT_SUCCESS(status))
         goto fail5;
 
+    Ring->KeyboardReport.ReportId = 1;
+    Ring->AbsMouseReport.ReportId = 2;
     RingReadFeatures(Ring);
 
     Ring->Mdl = __AllocatePage();
@@ -589,6 +788,13 @@ RingDisconnect(
     __FreePage(Ring->Mdl);
     Ring->Mdl = NULL;
 
+    RtlZeroMemory(&Ring->KeyboardReport,
+                  sizeof(XENVKBD_HID_KEYBOARD));
+    RtlZeroMemory(&Ring->AbsMouseReport,
+                  sizeof(XENVKBD_HID_ABSMOUSE));
+    Ring->KeyboardPending = FALSE;
+    Ring->AbsMousePending = FALSE;
+
     XENBUS_GNTTAB(DestroyCache,
                   &Ring->GnttabInterface,
                   Ring->GnttabCache);
@@ -644,4 +850,47 @@ RingNotify(
 {
     if (KeInsertQueueDpc(&Ring->Dpc, NULL, NULL))
         Ring->Dpcs++;
+}
+
+NTSTATUS
+RingGetInputReport(
+    IN  PXENVKBD_RING   Ring,
+    IN  ULONG           ReportId,
+    IN  PVOID           Buffer,
+    IN  ULONG           Length,
+    OUT PULONG          Returned
+    )
+{
+    switch (ReportId) {
+    case 1:
+        return __RingCopyBuffer(Buffer,
+                                Length,
+                                &Ring->KeyboardReport,
+                                sizeof(XENVKBD_HID_KEYBOARD),
+                                Returned);
+    case 2:
+        return __RingCopyBuffer(Buffer,
+                                Length,
+                                &Ring->AbsMouseReport,
+                                sizeof(XENVKBD_HID_ABSMOUSE),
+                                Returned);
+    default:
+        return STATUS_NOT_SUPPORTED;
+    }
+}
+
+VOID
+RingReadReport(
+    IN  PXENVKBD_RING   Ring
+    )
+{
+    // Check for pending reports, push 1 pending report to subscriber
+    if (Ring->KeyboardPending)
+        Ring->KeyboardPending = HidSendReadReport(Ring->Hid,
+                                                  &Ring->KeyboardReport,
+                                                  sizeof(XENVKBD_HID_KEYBOARD));
+    else if (Ring->AbsMousePending)
+        Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
+                                                  &Ring->AbsMouseReport,
+                                                  sizeof(XENVKBD_HID_ABSMOUSE));
 }
