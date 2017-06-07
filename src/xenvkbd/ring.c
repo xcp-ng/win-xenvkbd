@@ -78,6 +78,7 @@ struct _XENVKBD_RING {
     BOOLEAN                 Connected;
     BOOLEAN                 Enabled;
     BOOLEAN                 AbsPointer;
+    BOOLEAN                 VkbdStandalone;
 
     XENVKBD_HID_KEYBOARD    KeyboardReport;
     XENVKBD_HID_ABSMOUSE    AbsMouseReport;
@@ -497,6 +498,22 @@ RingReadFeatures(
     } else {
         Ring->AbsPointer = FALSE;
     }
+
+    status = XENBUS_STORE(Read,
+                          &Ring->StoreInterface,
+                          NULL,
+                          FrontendGetBackendPath(Ring->Frontend),
+                          "feature-vkbd-standalone",
+                          &Buffer);
+    if (NT_SUCCESS(status)) {
+        Ring->VkbdStandalone = (BOOLEAN)strtoul(Buffer, NULL, 2);
+
+        XENBUS_STORE(Free,
+                     &Ring->StoreInterface,
+                     Buffer);
+    } else {
+        Ring->VkbdStandalone = FALSE;
+    }
 }
 
 NTSTATUS
@@ -542,11 +559,15 @@ RingConnect(
     Ring->AbsMouseReport.ReportId = 2;
     RingReadFeatures(Ring);
 
+    status = STATUS_DEVICE_NOT_READY;
+    if (!Ring->VkbdStandalone)
+        goto fail6;
+
     Ring->Mdl = __AllocatePage();
     
     status = STATUS_NO_MEMORY;
     if (Ring->Mdl == NULL)
-        goto fail6;
+        goto fail7;
 
     ASSERT(Ring->Mdl->MdlFlags & MDL_MAPPED_TO_SYSTEM_VA);
     Ring->Shared = Ring->Mdl->MappedSystemVa;
@@ -566,7 +587,7 @@ RingConnect(
                            FALSE,
                            &Ring->Entry);
     if (!NT_SUCCESS(status))
-        goto fail7;
+        goto fail8;
 
     Ring->Channel = XENBUS_EVTCHN(Open,
                                   &Ring->EvtchnInterface,
@@ -578,7 +599,7 @@ RingConnect(
 
     status = STATUS_UNSUCCESSFUL;
     if (Ring->Channel == NULL)
-        goto fail8;
+        goto fail9;
 
     XENBUS_EVTCHN(Unmask,
                   &Ring->EvtchnInterface,
@@ -592,13 +613,13 @@ RingConnect(
                           Ring,
                           &Ring->DebugCallback);
     if (!NT_SUCCESS(status))
-        goto fail9;
+        goto fail10;
 
     Ring->Connected = TRUE;
     return STATUS_SUCCESS;
 
-fail9:
-    Error("fail9\n");
+fail10:
+    Error("fail10\n");
 
     XENBUS_EVTCHN(Close,
                   &Ring->EvtchnInterface,
@@ -607,8 +628,8 @@ fail9:
 
     Ring->Events = 0;
 
-fail8:
-    Error("fail8\n");
+fail9:
+    Error("fail9\n");
 
     (VOID) XENBUS_GNTTAB(RevokeForeignAccess,
                          &Ring->GnttabInterface,
@@ -617,12 +638,15 @@ fail8:
                          Ring->Entry);
     Ring->Entry = NULL;
 
-fail7:
-    Error("fail7\n");
+fail8:
+    Error("fail8\n");
 
     Ring->Shared = NULL;
     __FreePage(Ring->Mdl);
     Ring->Mdl = NULL;
+
+fail7:
+    Error("fail7\n");
 
 fail6:
     Error("fail6\n");
@@ -715,9 +739,21 @@ RingStoreWrite(
     if (!NT_SUCCESS(status))
         goto fail4;
 
+    status = XENBUS_STORE(Printf,
+                          &Ring->StoreInterface,
+                          Transaction,
+                          FrontendGetPath(Ring->Frontend),
+                          "request-vkbd-standalone",
+                          "%u",
+                          Ring->VkbdStandalone);
+    if (!NT_SUCCESS(status))
+        goto fail5;
+
     Trace("<=====\n");
     return STATUS_SUCCESS;
 
+fail5:
+    Error("fail5\n");
 fail4:
     Error("fail4\n");
 fail3:
@@ -817,6 +853,7 @@ RingTeardown(
     Ring->Dpcs = 0;
 
     Ring->AbsPointer = FALSE;
+    Ring->VkbdStandalone = FALSE;
 
     RtlZeroMemory(&Ring->Dpc, sizeof (KDPC));
 

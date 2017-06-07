@@ -109,13 +109,11 @@ HidEnable(
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
     KIRQL                   Irql;
-    BOOLEAN                 Exclusive;
     NTSTATUS                status;
 
     Trace("====>\n");
 
     AcquireMrswLockExclusive(&Context->Lock, &Irql);
-    Exclusive = TRUE;
 
     if (Context->Enabled)
         goto done;
@@ -128,11 +126,12 @@ HidEnable(
     KeMemoryBarrier();
 
     status = FrontendSetState(Context->Frontend, FRONTEND_ENABLED);
-    if (!NT_SUCCESS(status))
-        goto fail1;
+    if (!NT_SUCCESS(status)) {
+        if (status != STATUS_DEVICE_NOT_READY)
+            goto fail1;
+    }
 
 done:
-    ASSERT(Exclusive);
     ReleaseMrswLockExclusive(&Context->Lock, Irql, FALSE);
 
     Trace("<====\n");
@@ -149,10 +148,7 @@ fail1:
     Context->Argument = NULL;
     Context->Callback = NULL;
 
-    if (Exclusive)
-        ReleaseMrswLockExclusive(&Context->Lock, Irql, FALSE);
-    else
-        ReleaseMrswLockShared(&Context->Lock);
+    ReleaseMrswLockExclusive(&Context->Lock, Irql, FALSE);
 
     return status;
 }

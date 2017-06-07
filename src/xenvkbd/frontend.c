@@ -795,7 +795,7 @@ FrontendSetState(
     IN  XENVKBD_FRONTEND_STATE  State
     )
 {
-    BOOLEAN                     Failed;
+    NTSTATUS                    status;
     KIRQL                       Irql;
 
     KeAcquireSpinLock(&Frontend->Lock, &Irql);
@@ -805,10 +805,8 @@ FrontendSetState(
          FrontendStateName(Frontend->State),
          FrontendStateName(State));
 
-    Failed = FALSE;
-    while (Frontend->State != State && !Failed) {
-        NTSTATUS    status;
-
+    status = STATUS_SUCCESS;
+    while (Frontend->State != State && NT_SUCCESS(status)) {
         switch (Frontend->State) {
         case FRONTEND_UNKNOWN:
             switch (State) {
@@ -820,8 +818,6 @@ FrontendSetState(
                 status = FrontendClose(Frontend);
                 if (NT_SUCCESS(status)) {
                     Frontend->State = FRONTEND_CLOSED;
-                } else {
-                    Failed = TRUE;
                 }
                 break;
 
@@ -859,6 +855,9 @@ FrontendSetState(
                     FrontendClose(Frontend);
                     Frontend->State = FRONTEND_CLOSED;
                 }
+                break;
+            case FRONTEND_UNKNOWN:
+                Frontend->State = FRONTEND_UNKNOWN;
                 break;
             default:
                 ASSERT(FALSE);
@@ -935,7 +934,7 @@ FrontendSetState(
 
     Info("%s: <=====\n", __FrontendGetPath(Frontend));
 
-    return (!Failed) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+    return status;
 }
 
 static FORCEINLINE VOID
