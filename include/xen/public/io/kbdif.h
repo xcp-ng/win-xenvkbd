@@ -19,8 +19,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
- * Copyright (C) 2005 Anthony Liguori &lt;aliguori@us.ibm.com&gt;
- * Copyright (C) 2006 Red Hat, Inc., Markus Armbruster &lt;armbru@redhat.com&gt;
+ * Copyright (C) 2005 Anthony Liguori <aliguori@us.ibm.com>
+ * Copyright (C) 2006 Red Hat, Inc., Markus Armbruster <armbru@redhat.com>
  */
 
 #ifndef __XEN_PUBLIC_IO_KBDIF_H__
@@ -52,27 +52,34 @@
  * If a feature is not supported then 0 must be set or feature entry omitted.
  *
  * feature-abs-pointer
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Backends, which support reporting of absolute coordinates for pointer
  *      device should set this to 1.
  *
  * feature-multi-touch
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Backends, which support reporting of multi-touch events
  *      should set this to 1.
  *
+ * feature-raw-pointer
+ *      Values:        <uint>
+ *
+ *      Backends, which support reporting raw (unscaled) absolute coordinates
+ *      for pointer devices should set this to 1. Raw (unscaled) values have
+ *      a range of [0, 0x7fff].
+ *
  *------------------------- Pointer Device Parameters ------------------------
  *
  * width
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Maximum X coordinate (width) to be used by the frontend
  *      while reporting input events, pixels, [0; UINT32_MAX].
  *
  * height
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Maximum Y coordinate (height) to be used by the frontend
  *      while reporting input events, pixels, [0; UINT32_MAX].
@@ -88,32 +95,39 @@
  * by the backend have no effect.
  *
  * request-abs-pointer
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Request backend to report absolute pointer coordinates
  *      (XENKBD_TYPE_POS) instead of relative ones (XENKBD_TYPE_MOTION).
  *
  * request-multi-touch
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Request backend to report multi-touch events.
+ *
+ * request-raw-pointer
+ *      Values:         <uint>
+ *
+ *      Request backend to report raw unscaled absolute pointer coordinates.
+ *      This option is only valid if request-abs-pointer is also set.
+ *      Raw unscaled coordinates have the range [0, 0x7fff]
  *
  *----------------------- Request Transport Parameters -----------------------
  *
  * event-channel
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      The identifier of the Xen event channel used to signal activity
  *      in the ring buffer.
  *
  * page-gref
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      The Xen grant reference granting permission for the backend to map
  *      a sole page in a single page sized event ring buffer.
  *
  * page-ref
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      OBSOLETE, not recommended for use.
  *      PFN of the shared page.
@@ -121,18 +135,18 @@
  *----------------------- Multi-touch Device Parameters -----------------------
  *
  * multi-touch-num-contacts
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Number of simultaneous touches reported.
  *
  * multi-touch-width
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Width of the touch area to be used by the frontend
  *      while reporting input events, pixels, [0; UINT32_MAX].
  *
  * multi-touch-height
- *      Values:         &lt;uint&gt;
+ *      Values:         <uint>
  *
  *      Height of the touch area to be used by the frontend
  *      while reporting input events, pixels, [0; UINT32_MAX].

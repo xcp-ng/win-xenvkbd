@@ -78,7 +78,7 @@ struct _XENVKBD_RING {
     BOOLEAN                 Connected;
     BOOLEAN                 Enabled;
     BOOLEAN                 AbsPointer;
-    BOOLEAN                 VkbdStandalone;
+    BOOLEAN                 RawPointer;
 
     XENVKBD_HID_KEYBOARD    KeyboardReport;
     XENVKBD_HID_ABSMOUSE    AbsMouseReport;
@@ -503,16 +503,16 @@ RingReadFeatures(
                           &Ring->StoreInterface,
                           NULL,
                           FrontendGetBackendPath(Ring->Frontend),
-                          "feature-vkbd-standalone",
+                          "feature-raw-pointer",
                           &Buffer);
     if (NT_SUCCESS(status)) {
-        Ring->VkbdStandalone = (BOOLEAN)strtoul(Buffer, NULL, 2);
+        Ring->RawPointer = (BOOLEAN)strtoul(Buffer, NULL, 2);
 
         XENBUS_STORE(Free,
                      &Ring->StoreInterface,
                      Buffer);
     } else {
-        Ring->VkbdStandalone = FALSE;
+        Ring->RawPointer = FALSE;
     }
 }
 
@@ -560,7 +560,7 @@ RingConnect(
     RingReadFeatures(Ring);
 
     status = STATUS_DEVICE_NOT_READY;
-    if (!Ring->VkbdStandalone)
+    if (!Ring->RawPointer)
         goto fail6;
 
     Ring->Mdl = __AllocatePage();
@@ -743,9 +743,9 @@ RingStoreWrite(
                           &Ring->StoreInterface,
                           Transaction,
                           FrontendGetPath(Ring->Frontend),
-                          "request-vkbd-standalone",
+                          "request-raw-pointer",
                           "%u",
-                          Ring->VkbdStandalone);
+                          Ring->RawPointer);
     if (!NT_SUCCESS(status))
         goto fail5;
 
@@ -853,7 +853,7 @@ RingTeardown(
     Ring->Dpcs = 0;
 
     Ring->AbsPointer = FALSE;
-    Ring->VkbdStandalone = FALSE;
+    Ring->RawPointer = FALSE;
 
     RtlZeroMemory(&Ring->Dpc, sizeof (KDPC));
 
