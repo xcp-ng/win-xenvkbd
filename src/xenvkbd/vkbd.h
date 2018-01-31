@@ -154,7 +154,7 @@ static const USHORT VkbdKeyCodeToUsage[] = {
     0x13, // KEY_P
     0x2F, // KEY_LEFTBRACE
     0x30, // KEY_RIGHTBRACE
-    0x29, // KEY_ENTER
+    0x28, // KEY_ENTER
     0xE0, // KEY_LEFTCTRL
     0x04, // KEY_A
     0x16, // KEY_S
