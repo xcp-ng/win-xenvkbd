@@ -228,6 +228,7 @@ static const HID_DEVICE_ATTRIBUTES VkbdDeviceAttributes = {
     DEFINE_USAGE(KEY_RIGHTCTRL, 0xE4),          \
     DEFINE_USAGE(KEY_KPSLASH, 0x54),            \
     DEFINE_USAGE(KEY_SYSRQ, 0x48),              \
+    DEFINE_USAGE(KEY_PAUSE, 0x48),              \
     DEFINE_USAGE(KEY_RIGHTALT, 0xE6),           \
     DEFINE_USAGE(KEY_HOME, 0x4A),               \
     DEFINE_USAGE(KEY_UP, 0x52),                 \
@@ -238,7 +239,7 @@ static const HID_DEVICE_ATTRIBUTES VkbdDeviceAttributes = {
     DEFINE_USAGE(KEY_DOWN, 0x51),               \
     DEFINE_USAGE(KEY_PAGEDOWN, 0x4E),           \
     DEFINE_USAGE(KEY_INSERT, 0x49),             \
-    DEFINE_USAGE(KEY_DELETE, 0x4D),             \
+    DEFINE_USAGE(KEY_DELETE, 0x4C),             \
     DEFINE_USAGE(KEY_MUTE, 0x7F),               \
     DEFINE_USAGE(KEY_VOLUMEDOWN, 0x81),         \
     DEFINE_USAGE(KEY_VOLUMEUP, 0x80),           \

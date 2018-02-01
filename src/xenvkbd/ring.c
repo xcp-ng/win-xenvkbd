@@ -189,12 +189,13 @@ SetArray(
 }
 
 struct _KEY_CODE_TO_USAGE {
+    const CHAR  *KeyName;
     UCHAR       KeyCode;
     USHORT      Usage;
 };
 
 #define DEFINE_USAGE(_KeyCode, _Usage) \
-    { _KeyCode, _Usage }
+    { #_KeyCode, _KeyCode, _Usage }
 
 static struct _KEY_CODE_TO_USAGE KeyCodeToUsageTable[] = {
     DEFINE_USAGE_TABLE
@@ -215,6 +216,23 @@ static VOID RingBuildKeyCodeToUsageMapping(
         ASSERT3U(Ring->KeyCodeToUsageMapping[Entry->KeyCode], ==, 0);
         Ring->KeyCodeToUsageMapping[Entry->KeyCode] = Entry->Usage;
     }
+}
+
+static FORCEINLINE const CHAR *
+__KeyCodeToKeyName(
+    ULONG   KeyCode
+    )
+{
+    ULONG   Index;
+
+    for (Index = 0; Index < ARRAYSIZE(KeyCodeToUsageTable); Index++) {
+        struct _KEY_CODE_TO_USAGE   *Entry = &KeyCodeToUsageTable[Index];
+
+        if (Entry->KeyCode == KeyCode)
+            return Entry->KeyName;
+    }
+
+    return "UNKNOWN";
 }
 
 static FORCEINLINE USHORT
@@ -266,6 +284,11 @@ __RingEventKeypress(
     } else {
         // map KeyCode to Usage
         USHORT  Usage = __RingKeyCodeToUsage(Ring, KeyCode);
+
+        Trace("%s (%02x) -> %04x (%s)\n",
+              __KeyCodeToKeyName(KeyCode), KeyCode,
+              Usage, Pressed ? "PRESSED" : "RELEASED");
+
         if (Usage == 0)
             return; // non-standard key
 
