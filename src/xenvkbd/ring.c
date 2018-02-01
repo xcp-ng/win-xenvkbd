@@ -84,6 +84,8 @@ struct _XENVKBD_RING {
     XENVKBD_HID_ABSMOUSE    AbsMouseReport;
     BOOLEAN                 KeyboardPending;
     BOOLEAN                 AbsMousePending;
+
+    USHORT                  KeyCodeToUsageMapping[1 << (sizeof(UCHAR) * 8)];
 };
 
 #define XENVKBD_RING_TAG    'gniR'
@@ -186,13 +188,44 @@ SetArray(
     }
 }
 
-static FORCEINLINE USHORT
-KeyCodeToUsage(
-    IN  ULONG   KeyCode
+struct _KEY_CODE_TO_USAGE {
+    UCHAR       KeyCode;
+    USHORT      Usage;
+};
+
+#define DEFINE_USAGE(_KeyCode, _Usage) \
+    { _KeyCode, _Usage }
+
+static struct _KEY_CODE_TO_USAGE KeyCodeToUsageTable[] = {
+    DEFINE_USAGE_TABLE
+};
+
+#undef DEFINE_USAGE
+
+static VOID RingBuildKeyCodeToUsageMapping(
+    IN  PXENVKBD_RING   Ring
     )
 {
-    if (KeyCode < sizeof(VkbdKeyCodeToUsage)/sizeof(VkbdKeyCodeToUsage[0]))
-        return VkbdKeyCodeToUsage[KeyCode];
+    ULONG               Index;
+
+    for (Index = 0; Index < ARRAYSIZE(KeyCodeToUsageTable); Index++) {
+        struct _KEY_CODE_TO_USAGE   *Entry = &KeyCodeToUsageTable[Index];
+
+        ASSERT3U(Entry->KeyCode, <, ARRAYSIZE(Ring->KeyCodeToUsageMapping));
+        ASSERT3U(Ring->KeyCodeToUsageMapping[Entry->KeyCode], ==, 0);
+        Ring->KeyCodeToUsageMapping[Entry->KeyCode] = Entry->Usage;
+    }
+}
+
+static FORCEINLINE USHORT
+__RingKeyCodeToUsage(
+    IN  PXENVKBD_RING   Ring,
+    IN  ULONG           KeyCode
+    )
+{
+    if (KeyCode < ARRAYSIZE(Ring->KeyCodeToUsageMapping))
+        return Ring->KeyCodeToUsageMapping[KeyCode];
+
     return 0;
 }
 
@@ -232,7 +265,7 @@ __RingEventKeypress(
 
     } else {
         // map KeyCode to Usage
-        USHORT  Usage = KeyCodeToUsage(KeyCode);
+        USHORT  Usage = __RingKeyCodeToUsage(Ring, KeyCode);
         if (Usage == 0)
             return; // non-standard key
 
@@ -272,6 +305,25 @@ __RingEventPosition(
                                               sizeof(XENVKBD_HID_ABSMOUSE));
 }
 
+static VOID
+RingAcquireLock(
+    IN  PVOID       Context
+    )
+{
+    PXENVKBD_RING   Ring = Context;
+    KeAcquireSpinLockAtDpcLevel(&Ring->Lock);
+}
+
+static VOID
+RingReleaseLock(
+    IN  PVOID       Context
+    )
+{
+    PXENVKBD_RING   Ring = Context;
+#pragma warning(suppress:26110)
+    KeReleaseSpinLockFromDpcLevel(&Ring->Lock);
+}
+
 __drv_functionClass(KDEFERRED_ROUTINE)
 __drv_maxIRQL(DISPATCH_LEVEL)
 __drv_minIRQL(DISPATCH_LEVEL)
@@ -292,6 +344,11 @@ RingDpc(
     UNREFERENCED_PARAMETER(Argument2);
 
     ASSERT(Ring != NULL);
+
+    RingAcquireLock(Ring);
+
+    if (!Ring->Enabled)
+        goto done;
 
     for (;;) {
         ULONG   in_cons;
@@ -355,25 +412,9 @@ RingDpc(
                   &Ring->EvtchnInterface,
                   Ring->Channel,
                   FALSE);
-}
 
-static VOID
-RingAcquireLock(
-    IN  PVOID       Context
-    )
-{
-    PXENVKBD_RING   Ring = Context;
-    KeAcquireSpinLockAtDpcLevel(&Ring->Lock);
-}
-
-static VOID
-RingReleaseLock(
-    IN  PVOID       Context
-    )
-{
-    PXENVKBD_RING   Ring = Context;
-#pragma warning(suppress:26110)
-    KeReleaseSpinLockFromDpcLevel(&Ring->Lock);
+done:
+    RingReleaseLock(Ring);
 }
 
 KSERVICE_ROUTINE    RingEvtchnCallback;
@@ -467,6 +508,8 @@ RingInitialize(
 
     FdoGetEvtchnInterface(PdoGetFdo(FrontendGetPdo(Frontend)),
                           &(*Ring)->EvtchnInterface);
+
+    RingBuildKeyCodeToUsageMapping(*Ring);
 
     return STATUS_SUCCESS;
 
@@ -801,6 +844,8 @@ RingDisconnect(
 {
     Trace("=====>\n");
 
+    Ring->Connected = FALSE;
+
     XENBUS_DEBUG(Deregister,
                  &Ring->DebugInterface,
                  Ring->DebugCallback);
@@ -850,7 +895,12 @@ RingTeardown(
     )
 {
     Trace("=====>\n");
+
+    KeFlushQueuedDpcs();
     Ring->Dpcs = 0;
+
+    RtlZeroMemory(&Ring->KeyCodeToUsageMapping,
+                  sizeof (Ring->KeyCodeToUsageMapping));
 
     Ring->AbsPointer = FALSE;
     Ring->RawPointer = FALSE;
@@ -877,6 +927,7 @@ RingTeardown(
 
     ASSERT(IsZeroMemory(Ring, sizeof (XENVKBD_RING)));
     __RingFree(Ring);
+
     Trace("<=====\n");
 }
 
