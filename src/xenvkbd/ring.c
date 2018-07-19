@@ -128,19 +128,8 @@ __RingCopyBuffer(
     return STATUS_SUCCESS;
 }
 
-static FORCEINLINE LONG
-Constrain(
-    IN  LONG    Value,
-    IN  LONG    Min,
-    IN  LONG    Max
-    )
-{
-    if (Value < Min)
-        return Min;
-    if (Value > Max)
-        return Max;
-    return Value;
-}
+#define CONSTRAIN(_Value, _Min, _Max) \
+    (__min(__max((_Value), (_Min)), (_Max)))
 
 static FORCEINLINE UCHAR
 SetBit(
@@ -255,9 +244,9 @@ __RingEventMotion(
     IN  LONG            dZ
     )
 {
-    Ring->AbsMouseReport.X = (USHORT)Constrain(Ring->AbsMouseReport.X + dX, 0, 32767);
-    Ring->AbsMouseReport.Y = (USHORT)Constrain(Ring->AbsMouseReport.Y + dY, 0, 32767);
-    Ring->AbsMouseReport.dZ = -(CHAR)Constrain(dZ, -127, 127);
+    Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(Ring->AbsMouseReport.X + dX, 0, 32767);
+    Ring->AbsMouseReport.Y = (USHORT)CONSTRAIN(Ring->AbsMouseReport.Y + dY, 0, 32767);
+    Ring->AbsMouseReport.dZ = -(CHAR)CONSTRAIN(dZ, -127, 127);
 
     Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
                                               &Ring->AbsMouseReport,
@@ -319,9 +308,9 @@ __RingEventPosition(
     IN  LONG            dZ
     )
 {
-    Ring->AbsMouseReport.X = (USHORT)Constrain(X, 0, 32767);
-    Ring->AbsMouseReport.Y = (USHORT)Constrain(Y, 0, 32767);
-    Ring->AbsMouseReport.dZ = -(CHAR)Constrain(dZ, -127, 127);
+    Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(X, 0, 32767);
+    Ring->AbsMouseReport.Y = (USHORT)CONSTRAIN(Y, 0, 32767);
+    Ring->AbsMouseReport.dZ = -(CHAR)CONSTRAIN(dZ, -127, 127);
 
     Ring->AbsMousePending = HidSendReadReport(Ring->Hid,
                                               &Ring->AbsMouseReport,
