@@ -53,9 +53,9 @@ xenvkbd_coinst.dll=0,,
 xenvkbd_coinst_@MAJOR_VERSION@_@MINOR_VERSION@_@MICRO_VERSION@_@BUILD_NUMBER@.dll,xenvkbd_coinst.dll
 
 [Manufacturer] 
-%Vendor%=Inst,NT$ARCH$
+%Vendor%=Inst,NT@INF_ARCH@
 
-[Inst.NT$ARCH$]
+[Inst.NT@INF_ARCH@]
 ; DisplayName		Section		DeviceID
 ; -----------		-------		--------
 
