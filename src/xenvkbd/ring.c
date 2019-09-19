@@ -200,10 +200,11 @@ static VOID RingBuildKeyCodeToUsageMapping(
 
     for (Index = 0; Index < ARRAYSIZE(KeyCodeToUsageTable); Index++) {
         struct _KEY_CODE_TO_USAGE   *Entry = &KeyCodeToUsageTable[Index];
+        ULONG                       Code = Entry->KeyCode;
 
-        ASSERT3U(Entry->KeyCode, <, ARRAYSIZE(Ring->KeyCodeToUsageMapping));
-        ASSERT3U(Ring->KeyCodeToUsageMapping[Entry->KeyCode], ==, 0);
-        Ring->KeyCodeToUsageMapping[Entry->KeyCode] = Entry->Usage;
+        ASSERT3U(Code, <, ARRAYSIZE(Ring->KeyCodeToUsageMapping));
+        ASSERT3U(Ring->KeyCodeToUsageMapping[Code], ==, 0);
+        Ring->KeyCodeToUsageMapping[Code] = Entry->Usage;
     }
 }
 
