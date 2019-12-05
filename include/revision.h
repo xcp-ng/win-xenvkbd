@@ -34,9 +34,13 @@
 
 // Key:
 // H  - XENHID_HID_INTERFACE
+// ST - XENBUS_STORE_INTERFACE
+// SU - XENBUS_SUSPEND_INTERFACE
 
-//                    REVISION   H
-#define DEFINE_REVISION_TABLE           \
-    DEFINE_REVISION(0x09000000,  1)
+//                    REVISION   H  ST SU
+#define DEFINE_REVISION_TABLE              \
+    DEFINE_REVISION(0x09000000,  1, 0, 0), \
+    DEFINE_REVISION(0x09000001,  1, 1, 1), \
+    DEFINE_REVISION(0x09000002,  1, 2, 1)
 
 #endif  // _REVISION_H

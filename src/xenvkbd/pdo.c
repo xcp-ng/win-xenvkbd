@@ -343,10 +343,12 @@ PdoIsEjectRequested(
 typedef struct _XENVKBD_PDO_REVISION {
     ULONG   Number;
     ULONG   HidInterfaceVersion;
+    ULONG   StoreInterfaceVersion;
+    ULONG   SuspendInterfaceVersion;
 } XENVKBD_PDO_REVISION, *PXENVKBD_PDO_REVISION;
 
-#define DEFINE_REVISION(_N, _H) \
-    { (_N), (_H) }
+#define DEFINE_REVISION(_N, _H, _ST, _SU)   \
+    { (_N), (_H), (_ST), (_SU) }
 
 static XENVKBD_PDO_REVISION PdoRevision[] = {
     DEFINE_REVISION_TABLE
@@ -371,10 +373,28 @@ PdoDumpRevisions(
         ASSERT(IMPLY(Index == ARRAYSIZE(PdoRevision) - 1,
                      Revision->HidInterfaceVersion == XENHID_HID_INTERFACE_VERSION_MAX));
 
+        if (Revision->StoreInterfaceVersion != 0) {
+            ASSERT3U(Revision->StoreInterfaceVersion, >=, XENBUS_STORE_INTERFACE_VERSION_MIN);
+            ASSERT3U(Revision->StoreInterfaceVersion, <=, XENBUS_STORE_INTERFACE_VERSION_MAX);
+            ASSERT(IMPLY(Index == ARRAYSIZE(PdoRevision) - 1,
+                         Revision->StoreInterfaceVersion == XENBUS_STORE_INTERFACE_VERSION_MAX));
+        }
+
+        if (Revision->SuspendInterfaceVersion != 0) {
+            ASSERT3U(Revision->SuspendInterfaceVersion, >=, XENBUS_SUSPEND_INTERFACE_VERSION_MIN);
+            ASSERT3U(Revision->SuspendInterfaceVersion, <=, XENBUS_SUSPEND_INTERFACE_VERSION_MAX);
+            ASSERT(IMPLY(Index == ARRAYSIZE(PdoRevision) - 1,
+                         Revision->SuspendInterfaceVersion == XENBUS_SUSPEND_INTERFACE_VERSION_MAX));
+        }
+
         Info("%08X -> "
-             "HID v%u\n",
+             "HID v%u "
+             "STORE v%u "
+             "SUSPEND v%u\n",
              Revision->Number,
-             Revision->HidInterfaceVersion);
+             Revision->HidInterfaceVersion,
+             Revision->StoreInterfaceVersion,
+             Revision->SuspendInterfaceVersion);
     }
 }
 
@@ -1003,7 +1023,6 @@ struct _INTERFACE_ENTRY {
 struct _INTERFACE_ENTRY PdoInterfaceTable[] = {
     { &GUID_BUS_INTERFACE_STANDARD, "BUS_INTERFACE", PdoQueryBusInterface },
     { &GUID_XENHID_HID_INTERFACE, "HID_INTERFACE", PdoQueryHidInterface },
-    { &GUID_XENBUS_CACHE_INTERFACE, "CACHE_INTERFACE", PdoDelegateIrp },
     { &GUID_XENBUS_STORE_INTERFACE, "STORE_INTERFACE", PdoDelegateIrp },
     { &GUID_XENBUS_SUSPEND_INTERFACE, "SUSPEND_INTERFACE", PdoDelegateIrp },
     { NULL, NULL, NULL }
