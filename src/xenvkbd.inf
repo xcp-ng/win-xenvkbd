@@ -94,8 +94,8 @@ HKR,,CoInstallers32,0x00010000,"xenvkbd_coinst_@MAJOR_VERSION@_@MINOR_VERSION@_@
 [Strings] 
 
 Vendor="@VENDOR_NAME@"
-DiskDesc="@PRODUCT_NAME@ PV Keyboard/Mouse Package"
-XenVkbdName="@PRODUCT_NAME@ PV Keyboard/Mouse"
+DiskDesc="@PRODUCT_NAME@ PV Keyboard/Mouse Class Package"
+XenVkbdName="@PRODUCT_NAME@ PV Keyboard/Mouse Class"
 RequestKey="SYSTEM\CurrentControlSet\Services\xenbus_monitor\Request"
 
 SERVICE_BOOT_START=0x0 
