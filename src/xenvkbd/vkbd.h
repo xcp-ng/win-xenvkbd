@@ -227,7 +227,7 @@ static const HID_DEVICE_ATTRIBUTES VkbdDeviceAttributes = {
     DEFINE_USAGE(KEY_KPENTER, 0x58),            \
     DEFINE_USAGE(KEY_RIGHTCTRL, 0xE4),          \
     DEFINE_USAGE(KEY_KPSLASH, 0x54),            \
-    DEFINE_USAGE(KEY_SYSRQ, 0x48),              \
+    DEFINE_USAGE(KEY_SYSRQ, 0x46),              \
     DEFINE_USAGE(KEY_PAUSE, 0x48),              \
     DEFINE_USAGE(KEY_RIGHTALT, 0xE6),           \
     DEFINE_USAGE(KEY_HOME, 0x4A),               \
