@@ -424,7 +424,8 @@ RingDpc(
     XENBUS_EVTCHN(Unmask,
                   &Ring->EvtchnInterface,
                   Ring->Channel,
-                  FALSE);
+                  FALSE,
+                  TRUE);
 
 done:
     RingReleaseLock(Ring);
@@ -604,6 +605,7 @@ RingConnect(
                            &Ring->GnttabInterface,
                            "VKBD_Ring_Gnttab",
                            0,
+                           0,
                            RingAcquireLock,
                            RingReleaseLock,
                            Ring,
@@ -660,7 +662,8 @@ RingConnect(
     XENBUS_EVTCHN(Unmask,
                   &Ring->EvtchnInterface,
                   Ring->Channel,
-                  FALSE);
+                  FALSE,
+                  TRUE);
 
     status = XENBUS_DEBUG(Register,
                           &Ring->DebugInterface,
