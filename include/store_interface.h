@@ -1,4 +1,5 @@
-/* Copyright (c) Citrix Systems Inc.
+/* Copyright (c) Xen Project.
+ * Copyright (c) Cloud Software Group, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, 
@@ -325,4 +326,3 @@ typedef struct _XENBUS_STORE_INTERFACE_V2 XENBUS_STORE_INTERFACE, *PXENBUS_STORE
 #define XENBUS_STORE_INTERFACE_VERSION_MAX  2
 
 #endif  // _XENBUS_STORE_INTERFACE_H
-

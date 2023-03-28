@@ -1,4 +1,5 @@
-/* Copyright (c) Citrix Systems Inc.
+/* Copyright (c) Xen Project.
+ * Copyright (c) Cloud Software Group, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, 
@@ -300,4 +301,3 @@ typedef struct _XENBUS_GNTTAB_INTERFACE_V4 XENBUS_GNTTAB_INTERFACE, *PXENBUS_GNT
 #define XENBUS_GNTTAB_INTERFACE_VERSION_MAX 4
 
 #endif  // _XENBUS_GNTTAB_INTERFACE_H
-

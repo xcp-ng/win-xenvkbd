@@ -1,4 +1,5 @@
-/* Copyright (c) Citrix Systems Inc.
+/* Copyright (c) Xen Project.
+ * Copyright (c) Cloud Software Group, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, 
@@ -358,4 +359,3 @@ typedef struct _XENBUS_EVTCHN_INTERFACE_V9 XENBUS_EVTCHN_INTERFACE, *PXENBUS_EVT
 #define XENBUS_EVTCHN_INTERFACE_VERSION_MAX 9
 
 #endif  // _XENBUS_EVTCHN_INTERFACE_H
-
