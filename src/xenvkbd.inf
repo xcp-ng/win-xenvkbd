@@ -38,20 +38,16 @@ Provider=%Vendor%
 CatalogFile=xenvkbd.cat
 DriverVer=@INF_DATE@,@MAJOR_VERSION@.@MINOR_VERSION@.@MICRO_VERSION@.@BUILD_NUMBER@
 DriverPackageDisplayName=%DiskDesc%
+PnpLockdown=1
 
 [DestinationDirs] 
 DefaultDestDir=12 
-CoInst_CopyFiles=11
 
 [SourceDisksNames]
 0=%DiskDesc%
 
 [SourceDisksFiles]
 xenvkbd.sys=0,,
-xenvkbd_coinst.dll=0,,
-
-[CoInst_CopyFiles]
-xenvkbd_coinst_@MAJOR_VERSION@_@MINOR_VERSION@_@MICRO_VERSION@_@BUILD_NUMBER@.dll,xenvkbd_coinst.dll
 
 [Manufacturer] 
 %Vendor%=Inst,NT@INF_ARCH@
@@ -60,9 +56,9 @@ xenvkbd_coinst_@MAJOR_VERSION@_@MINOR_VERSION@_@MICRO_VERSION@_@BUILD_NUMBER@.dl
 ; DisplayName		Section		DeviceID
 ; -----------		-------		--------
 
-%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@@VENDOR_DEVICE_ID@&DEV_VKBD&REV_09000009
-%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@0001&DEV_VKBD&REV_09000009
-%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@0002&DEV_VKBD&REV_09000009
+%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@@VENDOR_DEVICE_ID@&DEV_VKBD&REV_0900000A
+%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@0001&DEV_VKBD&REV_0900000A
+%XenVkbdName%		=XenVkbd_Inst,	XENBUS\VEN_@VENDOR_PREFIX@0002&DEV_VKBD&REV_0900000A
 
 [XenVkbd_Inst] 
 CopyFiles=XenVkbd_Copyfiles
@@ -84,13 +80,6 @@ AddReg = XenVkbd_Parameters
 [XenVkbd_Parameters]
 HKR,"Parameters",,0x00000010
 HKR,"Parameters","RequestKey",0x00000000,%RequestKey%
-
-[XenVkbd_Inst.CoInstallers]
-CopyFiles=CoInst_CopyFiles
-AddReg=CoInst_AddReg
-
-[CoInst_AddReg]
-HKR,,CoInstallers32,0x00010000,"xenvkbd_coinst_@MAJOR_VERSION@_@MINOR_VERSION@_@MICRO_VERSION@_@BUILD_NUMBER@.dll,Entry"
 
 [Strings] 
 
