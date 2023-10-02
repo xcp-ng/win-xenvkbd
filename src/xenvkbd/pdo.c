@@ -40,7 +40,6 @@
 #include <xen.h>
 
 #include <suspend_interface.h>
-#include <unplug_interface.h>
 #include <debug_interface.h>
 
 #include "names.h"
@@ -79,9 +78,6 @@ struct _XENVKBD_PDO {
 
     XENBUS_SUSPEND_INTERFACE    SuspendInterface;
     PXENBUS_SUSPEND_CALLBACK    SuspendCallbackLate;
-
-    XENBUS_UNPLUG_INTERFACE     UnplugInterface;
-    BOOLEAN                     UnplugRequested;
 
     PXENVKBD_FRONTEND           Frontend;
 
@@ -2013,7 +2009,6 @@ PdoCreate(
         goto fail7;
 
     FdoGetSuspendInterface(Fdo, &Pdo->SuspendInterface);
-    FdoGetUnplugInterface(Fdo, &Pdo->UnplugInterface);
 
     Dx->Pdo = Pdo;
 
@@ -2045,9 +2040,6 @@ fail8:
     (VOID) __PdoClearEjectRequested(Pdo);
 
     Dx->Pdo = NULL;
-
-    RtlZeroMemory(&Pdo->UnplugInterface,
-                  sizeof (XENBUS_UNPLUG_INTERFACE));
 
     RtlZeroMemory(&Pdo->SuspendInterface,
                   sizeof (XENBUS_SUSPEND_INTERFACE));
@@ -2109,8 +2101,6 @@ PdoDestroy(
     PDEVICE_OBJECT      PhysicalDeviceObject = Dx->DeviceObject;
     PXENVKBD_FDO        Fdo = __PdoGetFdo(Pdo);
 
-    Pdo->UnplugRequested = FALSE;
-
     ASSERT3U(__PdoGetDevicePnpState(Pdo), ==, Deleted);
 
     ASSERT(__PdoIsMissing(Pdo));
@@ -2128,9 +2118,6 @@ PdoDestroy(
     (VOID) __PdoClearEjectRequested(Pdo);
 
     Dx->Pdo = NULL;
-
-    RtlZeroMemory(&Pdo->UnplugInterface,
-                  sizeof (XENBUS_UNPLUG_INTERFACE));
 
     RtlZeroMemory(&Pdo->SuspendInterface,
                   sizeof (XENBUS_SUSPEND_INTERFACE));
