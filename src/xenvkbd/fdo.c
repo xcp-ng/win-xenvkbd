@@ -756,36 +756,38 @@ __FdoEnumerate(
             Name = PdoGetName(Pdo);
             Missing = TRUE;
 
-            // If the PDO already exists and its name is in the device list
-            // then we don't want to remove it.
-            for (Index = 0; Devices[Index].Buffer != NULL; Index++) {
-                PANSI_STRING Device = &Devices[Index];
+            if (Devices != NULL) {
+                // If the PDO already exists and its name is in the device list
+                // then we don't want to remove it.
+                for (Index = 0; Devices[Index].Buffer != NULL; Index++) {
+                    PANSI_STRING Device = &Devices[Index];
 
-                if (Device->Length == 0)
-                    continue;
+                    if (Device->Length == 0)
+                        continue;
 
-                if (strcmp(Name, Device->Buffer) == 0) {
-                    Missing = FALSE;
-                    Device->Length = 0;  // avoid duplication
-                    break;
+                    if (strcmp(Name, Device->Buffer) == 0) {
+                        Missing = FALSE;
+                        Device->Length = 0;  // avoid duplication
+                        break;
+                    }
                 }
-            }
 
-            if (!PdoIsMissing(Pdo)) {
-                if (PdoIsEjectRequested(Pdo)) {
-                    IoRequestDeviceEject(PdoGetDeviceObject(Pdo));
-                } else if (Missing) {
-                    PdoSetMissing(Pdo, "device disappeared");
+                if (!PdoIsMissing(Pdo)) {
+                    if (PdoIsEjectRequested(Pdo)) {
+                        IoRequestDeviceEject(PdoGetDeviceObject(Pdo));
+                    } else if (Missing) {
+                        PdoSetMissing(Pdo, "device disappeared");
 
-                    // If the PDO has not yet been enumerated then we can
-                    // go ahead and mark it as deleted, otherwise we need
-                    // to notify PnP manager and wait for the REMOVE_DEVICE
-                    // IRP.
-                    if (PdoGetDevicePnpState(Pdo) == Present) {
-                        PdoSetDevicePnpState(Pdo, Deleted);
-                        PdoDestroy(Pdo);
-                    } else {
-                        NeedInvalidate = TRUE;
+                        // If the PDO has not yet been enumerated then we can
+                        // go ahead and mark it as deleted, otherwise we need
+                        // to notify PnP manager and wait for the REMOVE_DEVICE
+                        // IRP.
+                        if (PdoGetDevicePnpState(Pdo) == Present) {
+                            PdoSetDevicePnpState(Pdo, Deleted);
+                            PdoDestroy(Pdo);
+                        } else {
+                            NeedInvalidate = TRUE;
+                        }
                     }
                 }
             }
@@ -795,15 +797,17 @@ __FdoEnumerate(
     }
 
     // Walk the class list and create PDOs for any new device
-    for (Index = 0; Devices[Index].Buffer != NULL; Index++) {
-        PANSI_STRING Device = &Devices[Index];
+    if (Devices != NULL) {
+        for (Index = 0; Devices[Index].Buffer != NULL; Index++) {
+            PANSI_STRING Device = &Devices[Index];
 
-        if (Device->Length == 0)
-            continue;
+            if (Device->Length == 0)
+                continue;
 
-        status = PdoCreate(Fdo, Device);
-        if (NT_SUCCESS(status))
-            NeedInvalidate = TRUE;
+            status = PdoCreate(Fdo, Device);
+            if (NT_SUCCESS(status))
+                NeedInvalidate = TRUE;
+        }
     }
 
     __FdoReleaseMutex(Fdo);
@@ -950,8 +954,12 @@ FdoScan(
             Devices = NULL;
         }
 
-        if (Devices == NULL)
-            goto loop;
+        if (Devices == NULL) {
+            if (status == STATUS_OBJECT_PATH_NOT_FOUND)
+                goto invalidate;
+            else
+                goto loop;
+        }
 
         if (ParametersKey != NULL) {
             status = RegistryQuerySzValue(ParametersKey,
@@ -991,9 +999,11 @@ FdoScan(
         if (UnsupportedDevices != NULL)
             RegistryFreeSzValue(UnsupportedDevices);
 
+invalidate:
         NeedInvalidate = __FdoEnumerate(Fdo, Devices);
 
-        __FdoFreeAnsi(Devices);
+        if (Devices != NULL)
+            __FdoFreeAnsi(Devices);
 
         if (NeedInvalidate) {
             NeedInvalidate = FALSE;
