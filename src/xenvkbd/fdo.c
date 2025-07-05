@@ -771,23 +771,23 @@ __FdoEnumerate(
                         break;
                     }
                 }
+            }
 
-                if (!PdoIsMissing(Pdo)) {
-                    if (PdoIsEjectRequested(Pdo)) {
-                        IoRequestDeviceEject(PdoGetDeviceObject(Pdo));
-                    } else if (Missing) {
-                        PdoSetMissing(Pdo, "device disappeared");
+            if (!PdoIsMissing(Pdo)) {
+                if (PdoIsEjectRequested(Pdo)) {
+                    IoRequestDeviceEject(PdoGetDeviceObject(Pdo));
+                } else if (Missing) {
+                    PdoSetMissing(Pdo, "device disappeared");
 
-                        // If the PDO has not yet been enumerated then we can
-                        // go ahead and mark it as deleted, otherwise we need
-                        // to notify PnP manager and wait for the REMOVE_DEVICE
-                        // IRP.
-                        if (PdoGetDevicePnpState(Pdo) == Present) {
-                            PdoSetDevicePnpState(Pdo, Deleted);
-                            PdoDestroy(Pdo);
-                        } else {
-                            NeedInvalidate = TRUE;
-                        }
+                    // If the PDO has not yet been enumerated then we can
+                    // go ahead and mark it as deleted, otherwise we need
+                    // to notify PnP manager and wait for the REMOVE_DEVICE
+                    // IRP.
+                    if (PdoGetDevicePnpState(Pdo) == Present) {
+                        PdoSetDevicePnpState(Pdo, Deleted);
+                        PdoDestroy(Pdo);
+                    } else {
+                        NeedInvalidate = TRUE;
                     }
                 }
             }
