@@ -1318,8 +1318,7 @@ PdoQueryId(
 
         status = RtlStringCbPrintfW(Buffer,
                                     Id.MaximumLength,
-                                    L"XENVKBD\\VEN_%hs&DEV_HID",
-                                    __PdoGetVendorName(Pdo));
+                                    L"XENVKBD\\VEN_" VENDOR_PREFIX_STR "&DEV_HID");
         ASSERT(NT_SUCCESS(status));
 
         Buffer += wcslen(Buffer);
