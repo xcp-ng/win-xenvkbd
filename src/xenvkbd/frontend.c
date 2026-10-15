@@ -48,8 +48,6 @@
 #include "assert.h"
 #include "util.h"
 
-#define DOMID_INVALID   (0x7FF4U)
-
 struct _XENVKBD_FRONTEND {
     PXENVKBD_PDO                Pdo;
     PCHAR                       Path;
