@@ -88,10 +88,10 @@ RegistryOpenHardwareKey(
 
 extern NTSTATUS
 RegistryOpenSubKey(
-    IN  HANDLE      Key,
-    IN  PCHAR       Name,
-    IN  ACCESS_MASK DesiredAccess,
-    OUT PHANDLE     SubKey
+    _In_opt_ HANDLE     Key,
+    _In_ PSTR           Name,
+    _In_ ACCESS_MASK    DesiredAccess,
+    _Out_ PHANDLE       SubKey
     );
 
 extern NTSTATUS
