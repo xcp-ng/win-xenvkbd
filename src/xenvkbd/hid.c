@@ -517,7 +517,7 @@ done:
 
 static NTSTATUS
 HidAcquire(
-    PINTERFACE              Interface
+    _In_ PINTERFACE         Interface
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
