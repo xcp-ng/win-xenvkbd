@@ -65,28 +65,28 @@ FrontendInitialize(
 
 extern VOID
 FrontendTeardown(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     );
 
 extern VOID
 FrontendEjectFailed(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     );
 
 extern NTSTATUS
 FrontendSetState(
-    _In_ PXENVKBD_FRONTEND      Frontend,
+    _Inout_ PXENVKBD_FRONTEND   Frontend,
     _In_ XENVKBD_FRONTEND_STATE State
     );
 
 extern NTSTATUS
 FrontendResume(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     );
 
 extern VOID
 FrontendSuspend(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     );
 
 extern PXENVKBD_PDO

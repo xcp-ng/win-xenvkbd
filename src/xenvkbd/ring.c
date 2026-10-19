@@ -109,11 +109,11 @@ __RingFree(
 
 static FORCEINLINE NTSTATUS
 __RingCopyBuffer(
-    _In_ PVOID      Buffer,
-    _In_ ULONG      Length,
-    _In_ const VOID *Source,
-    _In_ ULONG      SourceLength,
-    _Out_ PULONG    Returned
+    _Out_writes_bytes_opt_(Length) PVOID    Buffer,
+    _In_ ULONG                              Length,
+    _In_ const VOID                         *Source,
+    _In_ ULONG                              SourceLength,
+    _Out_ PULONG                            Returned
     )
 {
     if (Buffer == NULL)
@@ -148,13 +148,13 @@ SetBit(
 
 static FORCEINLINE VOID
 SetArray(
-    _In_ PUCHAR     Array,
-    _In_ ULONG      Size,
-    _In_ UCHAR      Value,
-    _In_ BOOLEAN    Pressed
+    _Inout_updates_(Size) PUCHAR    Array,
+    _In_ ULONG                      Size,
+    _In_ UCHAR                      Value,
+    _In_ BOOLEAN                    Pressed
     )
 {
-    ULONG           Idx;
+    ULONG                           Idx;
     if (Pressed) {
         for (Idx = 0; Idx < Size; ++Idx) {
             if (Array[Idx] == Value)
@@ -194,7 +194,7 @@ static struct _KEY_CODE_TO_USAGE KeyCodeToUsageTable[] = {
 #undef DEFINE_USAGE
 
 static VOID RingBuildKeyCodeToUsageMapping(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING Ring
     )
 {
     ULONG               Index;
@@ -240,10 +240,10 @@ __RingKeyCodeToUsage(
 
 static FORCEINLINE VOID
 __RingEventMotion(
-    _In_ PXENVKBD_RING  Ring,
-    _In_ LONG           dX,
-    _In_ LONG           dY,
-    _In_ LONG           dZ
+    _Inout_ PXENVKBD_RING   Ring,
+    _In_ LONG               dX,
+    _In_ LONG               dY,
+    _In_ LONG               dZ
     )
 {
     Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(Ring->AbsMouseReport.X + dX, 0, 32767);
@@ -257,9 +257,9 @@ __RingEventMotion(
 
 static FORCEINLINE VOID
 __RingEventKeypress(
-    _In_ PXENVKBD_RING  Ring,
-    _In_ ULONG          KeyCode,
-    _In_ BOOLEAN        Pressed
+    _Inout_ PXENVKBD_RING   Ring,
+    _In_ ULONG              KeyCode,
+    _In_ BOOLEAN            Pressed
     )
 {
     if (KeyCode >= 0x110 && KeyCode <= 0x114) {
@@ -304,10 +304,10 @@ __RingEventKeypress(
 
 static FORCEINLINE VOID
 __RingEventPosition(
-    _In_ PXENVKBD_RING  Ring,
-    _In_ ULONG          X,
-    _In_ ULONG          Y,
-    _In_ LONG           dZ
+    _Inout_ PXENVKBD_RING   Ring,
+    _In_ ULONG              X,
+    _In_ ULONG              Y,
+    _In_ LONG               dZ
     )
 {
     Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(X, 0, 32767);
@@ -535,11 +535,11 @@ fail1:
 
 static FORCEINLINE VOID
 RingReadFeatures(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
-    PCHAR               Buffer;
-    NTSTATUS            status;
+    PCHAR                   Buffer;
+    NTSTATUS                status;
 
     status = XENBUS_STORE(Read,
                           &Ring->StoreInterface,
@@ -576,12 +576,12 @@ RingReadFeatures(
 
 NTSTATUS
 RingConnect(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
-    PFN_NUMBER          Pfn;
-    PXENVKBD_FRONTEND   Frontend;
-    NTSTATUS            status;
+    PFN_NUMBER              Pfn;
+    PXENVKBD_FRONTEND       Frontend;
+    NTSTATUS                status;
 
     Trace("=====>\n");
     Frontend = Ring->Frontend;
@@ -827,7 +827,7 @@ fail1:
 
 NTSTATUS
 RingEnable(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     Trace("=====>\n");
@@ -843,7 +843,7 @@ RingEnable(
 
 VOID
 RingDisable(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     Trace("=====>\n");
@@ -856,7 +856,7 @@ RingDisable(
 
 VOID
 RingDisconnect(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     Trace("=====>\n");
@@ -908,7 +908,7 @@ RingDisconnect(
 
 VOID
 RingTeardown(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     Trace("=====>\n");
@@ -950,7 +950,7 @@ RingTeardown(
 
 VOID
 RingNotify(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     if (KeInsertQueueDpc(&Ring->Dpc, NULL, NULL))
@@ -959,11 +959,11 @@ RingNotify(
 
 NTSTATUS
 RingGetInputReport(
-    _In_ PXENVKBD_RING  Ring,
-    _In_ ULONG          ReportId,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Length,
-    _Out_ PULONG        Returned
+    _In_ PXENVKBD_RING                      Ring,
+    _In_ ULONG                              ReportId,
+    _Out_writes_bytes_opt_(Length) PVOID    Buffer,
+    _In_ ULONG                              Length,
+    _Out_ PULONG                            Returned
     )
 {
     switch (ReportId) {
@@ -986,7 +986,7 @@ RingGetInputReport(
 
 VOID
 RingReadReport(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     )
 {
     // Check for pending reports, push 1 pending report to subscriber

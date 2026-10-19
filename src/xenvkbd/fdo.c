@@ -230,7 +230,7 @@ FdoGetPhysicalDeviceObject(
 _IRQL_requires_(PASSIVE_LEVEL)
 static FORCEINLINE NTSTATUS
 __FdoAcquireLowerBusInterface(
-    _In_ PXENVKBD_FDO       Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
     PBUS_INTERFACE_STANDARD BusInterface;
@@ -313,7 +313,7 @@ fail1:
 
 static FORCEINLINE VOID
 __FdoReleaseLowerBusInterface(
-    _In_ PXENVKBD_FDO       Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
     PBUS_INTERFACE_STANDARD BusInterface;
@@ -619,13 +619,13 @@ FdoForwardIrpSynchronously(
 
 NTSTATUS
 FdoAddPhysicalDeviceObject(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PXENVKBD_PDO       Pdo
     )
 {
-    PDEVICE_OBJECT      DeviceObject;
-    PXENVKBD_DX         Dx;
-    NTSTATUS            status;
+    PDEVICE_OBJECT          DeviceObject;
+    PXENVKBD_DX             Dx;
+    NTSTATUS                status;
 
     DeviceObject = PdoGetDeviceObject(Pdo);
     Dx = (PXENVKBD_DX)DeviceObject->DeviceExtension;
@@ -653,12 +653,12 @@ fail1:
 
 VOID
 FdoRemovePhysicalDeviceObject(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PXENVKBD_PDO       Pdo
     )
 {
-    PDEVICE_OBJECT      DeviceObject;
-    PXENVKBD_DX         Dx;
+    PDEVICE_OBJECT          DeviceObject;
+    PXENVKBD_DX             Dx;
 
     DeviceObject = PdoGetDeviceObject(Pdo);
     Dx = (PXENVKBD_DX)DeviceObject->DeviceExtension;
@@ -704,7 +704,7 @@ __FdoReleaseMutex(
 
 VOID
 FdoReleaseMutex(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
     __FdoReleaseMutex(Fdo);
@@ -820,7 +820,7 @@ done:
 
 static FORCEINLINE PANSI_STRING
 __FdoMultiSzToUpcaseAnsi(
-    _In_ PSTR       Buffer
+    _Inout_ PZZSTR  Buffer
     )
 {
     PANSI_STRING    Ansi;
@@ -898,14 +898,14 @@ __FdoFreeAnsi(
 
 static NTSTATUS
 FdoScan(
-    _In_ PXENVKBD_THREAD Self,
-    _In_ PVOID           Context
+    _In_ PXENVKBD_THREAD    Self,
+    _In_ PVOID              Context
     )
 {
-    PXENVKBD_FDO        Fdo = Context;
-    PKEVENT             Event;
-    HANDLE              ParametersKey;
-    NTSTATUS            status;
+    PXENVKBD_FDO            Fdo = Context;
+    PKEVENT                 Event;
+    HANDLE                  ParametersKey;
+    NTSTATUS                status;
 
     Trace("====>\n");
 
@@ -1023,7 +1023,7 @@ loop:
 
 static DECLSPEC_NOINLINE VOID
 FdoParseResources(
-    _In_ PXENVKBD_FDO           Fdo,
+    _Inout_ PXENVKBD_FDO        Fdo,
     _In_ PCM_RESOURCE_LIST      RawResourceList,
     _In_ PCM_RESOURCE_LIST      TranslatedResourceList
     )
@@ -1071,7 +1071,7 @@ FdoParseResources(
 static FORCEINLINE BOOLEAN
 __FdoMatchDistribution(
     _In_ PXENVKBD_FDO   Fdo,
-    _In_ PSTR           Buffer
+    _Inout_ PSTR        Buffer
     )
 {
     PCHAR               Vendor;
@@ -1327,7 +1327,7 @@ fail1:
 
 static FORCEINLINE VOID
 __FdoD0ToD3(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
     Trace("====>\n");
@@ -1367,13 +1367,13 @@ FdoSuspendCallbackLate(
 // This function must not touch pageable code or data
 static DECLSPEC_NOINLINE NTSTATUS
 FdoD3ToD0(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
-    POWER_STATE         PowerState;
-    KIRQL               Irql;
-    PLIST_ENTRY         ListEntry;
-    NTSTATUS            status;
+    POWER_STATE             PowerState;
+    KIRQL                   Irql;
+    PLIST_ENTRY             ListEntry;
+    NTSTATUS                status;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
     ASSERT3U(__FdoGetDevicePowerState(Fdo), ==, PowerDeviceD3);
@@ -1460,12 +1460,12 @@ fail1:
 // This function must not touch pageable code or data
 static DECLSPEC_NOINLINE VOID
 FdoD0ToD3(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
-    POWER_STATE         PowerState;
-    PLIST_ENTRY         ListEntry;
-    KIRQL               Irql;
+    POWER_STATE             PowerState;
+    PLIST_ENTRY             ListEntry;
+    KIRQL                   Irql;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
     ASSERT3U(__FdoGetDevicePowerState(Fdo), ==, PowerDeviceD0);
@@ -1542,12 +1542,12 @@ FdoS3ToS4(
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoStartDevice(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    NTSTATUS                status;
 
     status = FdoForwardIrpSynchronously(Fdo, Irp);
     if (!NT_SUCCESS(status))
@@ -1637,11 +1637,11 @@ FdoCancelStopDevice(
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoStopDevice(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    NTSTATUS            status;
+    NTSTATUS                status;
 
     if (__FdoGetDevicePowerState(Fdo) == PowerDeviceD0)
         FdoD0ToD3(Fdo);
@@ -1735,12 +1735,12 @@ FdoSurpriseRemoval(
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoRemoveDevice(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PLIST_ENTRY         ListEntry;
-    NTSTATUS            status;
+    PLIST_ENTRY             ListEntry;
+    NTSTATUS                status;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
 
@@ -1817,16 +1817,16 @@ done:
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoQueryDeviceRelations(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    ULONG               Size;
-    PDEVICE_RELATIONS   Relations;
-    ULONG               Count;
-    PLIST_ENTRY         ListEntry;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    ULONG                   Size;
+    PDEVICE_RELATIONS       Relations;
+    ULONG                   Count;
+    PLIST_ENTRY             ListEntry;
+    NTSTATUS                status;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
 
@@ -1943,7 +1943,7 @@ fail1:
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoQueryCapabilities(
-    _In_ PXENVKBD_FDO       Fdo,
+    _Inout_ PXENVKBD_FDO    Fdo,
     _In_ PIRP               Irp
     )
 {
@@ -1983,7 +1983,7 @@ fail1:
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoDeviceUsageNotification(
-    _In_ PXENVKBD_FDO               Fdo,
+    _Inout_ PXENVKBD_FDO            Fdo,
     _In_ PIRP                       Irp
     )
 {
@@ -2074,13 +2074,13 @@ done:
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoDispatchPnp(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    UCHAR               MinorFunction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    UCHAR                   MinorFunction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     MinorFunction = StackLocation->MinorFunction;
@@ -2154,13 +2154,13 @@ FdoDispatchPnp(
 
 static FORCEINLINE NTSTATUS
 __FdoSetDevicePowerUp(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    DEVICE_POWER_STATE  DeviceState;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    DEVICE_POWER_STATE      DeviceState;
+    NTSTATUS                status;
 
     Trace("====>\n");
 
@@ -2192,13 +2192,13 @@ done:
 
 static FORCEINLINE NTSTATUS
 __FdoSetDevicePowerDown(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    DEVICE_POWER_STATE  DeviceState;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    DEVICE_POWER_STATE      DeviceState;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     DeviceState = StackLocation->Parameters.Power.State.DeviceState;
@@ -2223,14 +2223,14 @@ __FdoSetDevicePowerDown(
 
 static FORCEINLINE NTSTATUS
 __FdoSetDevicePower(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    DEVICE_POWER_STATE  DeviceState;
-    POWER_ACTION        PowerAction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    DEVICE_POWER_STATE      DeviceState;
+    POWER_ACTION            PowerAction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     DeviceState = StackLocation->Parameters.Power.State.DeviceState;
@@ -2791,15 +2791,15 @@ FdoSystemPower(
 
 static DECLSPEC_NOINLINE NTSTATUS
 FdoDispatchPower(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    UCHAR               MinorFunction;
-    POWER_STATE_TYPE    PowerType;
-    POWER_ACTION        PowerAction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    UCHAR                   MinorFunction;
+    POWER_STATE_TYPE        PowerType;
+    POWER_ACTION            PowerAction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     MinorFunction = StackLocation->MinorFunction;
@@ -2873,12 +2873,12 @@ FdoDispatchDefault(
 
 NTSTATUS
 FdoDispatch(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
 
@@ -3231,11 +3231,11 @@ fail1:
 
 VOID
 FdoDestroy(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     )
 {
-    PXENVKBD_DX         Dx = Fdo->Dx;
-    PDEVICE_OBJECT      FunctionDeviceObject = Dx->DeviceObject;
+    PXENVKBD_DX             Dx = Fdo->Dx;
+    PDEVICE_OBJECT          FunctionDeviceObject = Dx->DeviceObject;
 
     ASSERT(IsListEmpty(&Dx->ListEntry));
     ASSERT3U(Fdo->References, ==, 0);

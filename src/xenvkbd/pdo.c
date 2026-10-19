@@ -199,8 +199,8 @@ __PdoGetDevicePowerState(
 
 static FORCEINLINE VOID
 __PdoSetMissing(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PCSTR          Reason
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PCSTR              Reason
     )
 {
     Pdo->Reason = Reason;
@@ -209,8 +209,8 @@ __PdoSetMissing(
 
 VOID
 PdoSetMissing(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PCSTR          Reason
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PCSTR              Reason
     )
 {
     __PdoSetMissing(Pdo, Reason);
@@ -284,7 +284,7 @@ PdoGetName(
 
 static FORCEINLINE BOOLEAN
 __PdoSetEjectRequested(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     )
 {
     return (InterlockedBitTestAndSet(&Pdo->Eject, 0) == 0) ? TRUE : FALSE;
@@ -292,12 +292,12 @@ __PdoSetEjectRequested(
 
 VOID
 PdoRequestEject(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     )
 {
-    PXENVKBD_DX         Dx = Pdo->Dx;
-    PDEVICE_OBJECT      PhysicalDeviceObject = Dx->DeviceObject;
-    PXENVKBD_FDO        Fdo = __PdoGetFdo(Pdo);
+    PXENVKBD_DX             Dx = Pdo->Dx;
+    PDEVICE_OBJECT          PhysicalDeviceObject = Dx->DeviceObject;
+    PXENVKBD_FDO            Fdo = __PdoGetFdo(Pdo);
 
     if (!__PdoSetEjectRequested(Pdo))
         return;
@@ -312,7 +312,7 @@ PdoRequestEject(
 
 static FORCEINLINE BOOLEAN
 __PdoClearEjectRequested(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     )
 {
     return (InterlockedBitTestAndReset(&Pdo->Eject, 0) != 0) ? TRUE : FALSE;
@@ -650,10 +650,10 @@ fail1:
 // This function must not touch pageable code or data
 static DECLSPEC_NOINLINE VOID
 PdoD0ToD3(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     )
 {
-    KIRQL               Irql;
+    KIRQL                   Irql;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
 
@@ -767,11 +767,11 @@ PdoCancelStopDevice(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoStopDevice(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    NTSTATUS            status;
+    NTSTATUS                status;
 
     if (__PdoGetDevicePowerState(Pdo) != PowerDeviceD0)
         goto done;
@@ -807,11 +807,11 @@ PdoQueryRemoveDevice(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoCancelRemoveDevice(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    NTSTATUS            status;
+    NTSTATUS                status;
 
     if (__PdoClearEjectRequested(Pdo))
         FrontendEjectFailed(__PdoGetFrontend(Pdo));
@@ -846,13 +846,13 @@ PdoSurpriseRemoval(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoRemoveDevice(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PXENVKBD_FDO        Fdo = __PdoGetFdo(Pdo);
-    BOOLEAN             NeedInvalidate;
-    NTSTATUS            status;
+    PXENVKBD_FDO            Fdo = __PdoGetFdo(Pdo);
+    BOOLEAN                 NeedInvalidate;
+    NTSTATUS                status;
 
     if (__PdoGetDevicePowerState(Pdo) != PowerDeviceD0)
         goto done;
@@ -1457,12 +1457,12 @@ PdoDeviceUsageNotification(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoEject(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PXENVKBD_FDO        Fdo = __PdoGetFdo(Pdo);
-    NTSTATUS            status;
+    PXENVKBD_FDO            Fdo = __PdoGetFdo(Pdo);
+    NTSTATUS                status;
 
     Trace("%s\n", __PdoGetName(Pdo));
 
@@ -1486,13 +1486,13 @@ PdoEject(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoDispatchPnp(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    UCHAR               MinorFunction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    UCHAR                   MinorFunction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     MinorFunction = StackLocation->MinorFunction;
@@ -1591,14 +1591,14 @@ PdoDispatchPnp(
 
 static FORCEINLINE NTSTATUS
 __PdoSetDevicePower(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    DEVICE_POWER_STATE  DeviceState;
-    POWER_ACTION        PowerAction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    DEVICE_POWER_STATE      DeviceState;
+    POWER_ACTION            PowerAction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     DeviceState = StackLocation->Parameters.Power.State.DeviceState;
@@ -1779,14 +1779,14 @@ PdoSystemPower(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoSetPower(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    POWER_STATE_TYPE    PowerType;
-    POWER_ACTION        PowerAction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    POWER_STATE_TYPE        PowerType;
+    POWER_ACTION            PowerAction;
+    NTSTATUS                status;
     
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     PowerType = StackLocation->Parameters.Power.Type;
@@ -1856,13 +1856,13 @@ PdoQueryPower(
 
 static DECLSPEC_NOINLINE NTSTATUS
 PdoDispatchPower(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    UCHAR               MinorFunction;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    UCHAR                   MinorFunction;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
     MinorFunction = StackLocation->MinorFunction;
@@ -1903,12 +1903,12 @@ PdoDispatchDefault(
 
 NTSTATUS
 PdoDispatch(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     )
 {
-    PIO_STACK_LOCATION  StackLocation;
-    NTSTATUS            status;
+    PIO_STACK_LOCATION      StackLocation;
+    NTSTATUS                status;
 
     StackLocation = IoGetCurrentIrpStackLocation(Irp);
 
@@ -2093,12 +2093,12 @@ fail1:
 
 VOID
 PdoDestroy(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     )
 {
-    PXENVKBD_DX         Dx = Pdo->Dx;
-    PDEVICE_OBJECT      PhysicalDeviceObject = Dx->DeviceObject;
-    PXENVKBD_FDO        Fdo = __PdoGetFdo(Pdo);
+    PXENVKBD_DX             Dx = Pdo->Dx;
+    PDEVICE_OBJECT          PhysicalDeviceObject = Dx->DeviceObject;
+    PXENVKBD_FDO            Fdo = __PdoGetFdo(Pdo);
 
     ASSERT3U(__PdoGetDevicePnpState(Pdo), ==, Deleted);
 

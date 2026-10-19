@@ -58,7 +58,7 @@ HidGetInterface(
 
 extern VOID
 HidTeardown(
-    _In_ PXENVKBD_HID_CONTEXT   Context
+    _Inout_ PXENVKBD_HID_CONTEXT    Context
     );
 
 // CALLBACKS

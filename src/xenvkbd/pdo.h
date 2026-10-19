@@ -52,8 +52,8 @@ PdoGetDevicePnpState(
 
 extern VOID
 PdoSetMissing(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PCSTR          Reason
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PCSTR              Reason
     );
 
 extern BOOLEAN
@@ -63,7 +63,7 @@ PdoIsMissing(
 
 extern VOID
 PdoRequestEject(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     );
 
 extern BOOLEAN
@@ -138,7 +138,7 @@ PdoSuspend(
 
 extern VOID
 PdoDestroy(
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_PDO    Pdo
     );
 
 #include "frontend.h"
@@ -157,8 +157,8 @@ PdoGetHidContext(
 
 extern NTSTATUS
 PdoDispatch(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_PDO    Pdo,
+    _In_ PIRP               Irp
     );
 
 #endif  // _XENVKBD_PDO_H

@@ -285,13 +285,13 @@ loop:
 
 VOID
 FrontendEjectFailed(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    KIRQL                   Irql;
-    ULONG                   Length;
-    PCHAR                   Path;
-    NTSTATUS                status;
+    KIRQL                       Irql;
+    ULONG                       Length;
+    PCHAR                       Path;
+    NTSTATUS                    status;
 
     KeAcquireSpinLock(&Frontend->Lock, &Irql);
 
@@ -336,7 +336,7 @@ fail1:
 
 static VOID
 FrontendSetOnline(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
     Trace("====>\n");
@@ -348,7 +348,7 @@ FrontendSetOnline(
 
 static VOID
 FrontendSetOffline(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
     Trace("====>\n");
@@ -361,11 +361,11 @@ FrontendSetOffline(
 
 static VOID
 FrontendSetXenbusState(
-    _In_ PXENVKBD_FRONTEND  Frontend,
-    _In_ XenbusState        State
+    _Inout_ PXENVKBD_FRONTEND   Frontend,
+    _In_ XenbusState            State
     )
 {
-    BOOLEAN                 Online;
+    BOOLEAN                     Online;
 
     Trace("%s: ====> %s\n",
           __FrontendGetPath(Frontend),
@@ -487,12 +487,12 @@ FrontendWaitForBackendXenbusStateChange(
 
 static NTSTATUS
 FrontendUpdatePath(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    ULONG                   Length;
-    PCHAR                   Buffer;
-    NTSTATUS                status;
+    ULONG                       Length;
+    PCHAR                       Buffer;
+    NTSTATUS                    status;
 
     status = XENBUS_STORE(Read,
                           &Frontend->StoreInterface,
@@ -553,11 +553,11 @@ fail1:
 
 static NTSTATUS
 FrontendClose(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    XenbusState             State;
-    NTSTATUS                status;
+    XenbusState                 State;
+    NTSTATUS                    status;
 
     Trace("=====>\n");
     if (Frontend->Watch)
@@ -618,11 +618,11 @@ fail1:
 
 static NTSTATUS
 FrontendPrepare(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    XenbusState             State;
-    NTSTATUS                status;
+    XenbusState                 State;
+    NTSTATUS                    status;
 
     Trace("=====>\n");
 
@@ -667,11 +667,11 @@ fail1:
 
 static NTSTATUS
 FrontendConnect(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    XenbusState             State;
-    NTSTATUS                status;
+    XenbusState                 State;
+    NTSTATUS                    status;
 
     Trace("=====>\n");
 
@@ -790,7 +790,7 @@ FrontendDisable(
 
 NTSTATUS
 FrontendSetState(
-    _In_ PXENVKBD_FRONTEND      Frontend,
+    _Inout_ PXENVKBD_FRONTEND   Frontend,
     _In_ XENVKBD_FRONTEND_STATE State
     )
 {
@@ -938,7 +938,7 @@ FrontendSetState(
 
 static FORCEINLINE VOID
 __FrontendResume(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
     ASSERT3U(KeGetCurrentIrql(), ==, DISPATCH_LEVEL);
@@ -949,7 +949,7 @@ __FrontendResume(
 
 static FORCEINLINE VOID
 __FrontendSuspend(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
     ASSERT3U(KeGetCurrentIrql(), ==, DISPATCH_LEVEL);
@@ -980,11 +980,11 @@ FrontendSuspendCallbackLate(
 
 NTSTATUS
 FrontendResume(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    KIRQL                   Irql;
-    NTSTATUS                status;
+    KIRQL                       Irql;
+    NTSTATUS                    status;
 
     Trace("====>\n");
 
@@ -1056,10 +1056,10 @@ fail1:
 
 VOID
 FrontendSuspend(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
-    KIRQL                   Irql;
+    KIRQL                       Irql;
 
     Trace("====>\n");
 
@@ -1204,7 +1204,7 @@ fail1:
 
 VOID
 FrontendTeardown(
-    _In_ PXENVKBD_FRONTEND  Frontend
+    _Inout_ PXENVKBD_FRONTEND   Frontend
     )
 {
     Trace("====>\n");
