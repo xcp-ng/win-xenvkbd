@@ -41,124 +41,124 @@
 
 extern VOID
 PdoSetDevicePnpState(
-    IN  PXENVKBD_PDO        Pdo,
-    IN  DEVICE_PNP_STATE    State
+    _In_ PXENVKBD_PDO       Pdo,
+    _In_ DEVICE_PNP_STATE   State
     );
 
 extern DEVICE_PNP_STATE
 PdoGetDevicePnpState(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 PdoSetMissing(
-    IN  PXENVKBD_PDO    Pdo,
-    IN  const CHAR      *Reason
+    _In_ PXENVKBD_PDO   Pdo,
+    _In_ const CHAR     *Reason
     );
 
 extern BOOLEAN
 PdoIsMissing(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 PdoRequestEject(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern BOOLEAN
 PdoIsEjectRequested(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern PCHAR
 PdoGetName(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern PXENVKBD_FDO
 PdoGetFdo(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern PDEVICE_OBJECT
 PdoGetDeviceObject(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern PDMA_ADAPTER
 PdoGetDmaAdapter(
-    IN  PXENVKBD_PDO        Pdo,
-    IN  PDEVICE_DESCRIPTION DeviceDescriptor,
-    OUT PULONG              NumberOfMapRegisters
+    _In_ PXENVKBD_PDO           Pdo,
+    _In_ PDEVICE_DESCRIPTION    DeviceDescriptor,
+    _Out_ PULONG                NumberOfMapRegisters
     );
 
 extern BOOLEAN
 PdoTranslateBusAddress(
-    IN      PXENVKBD_PDO        Pdo,
-    IN      PHYSICAL_ADDRESS    BusAddress,
-    IN      ULONG               Length,
-    IN OUT  PULONG              AddressSpace,
-    OUT     PPHYSICAL_ADDRESS   TranslatedAddress
+    _In_ PXENVKBD_PDO       Pdo,
+    _In_ PHYSICAL_ADDRESS   BusAddress,
+    _In_ ULONG              Length,
+    _Inout_ PULONG          AddressSpace,
+    _Out_ PPHYSICAL_ADDRESS TranslatedAddress
     );
 
 extern ULONG
 PdoSetBusData(
-    IN  PXENVKBD_PDO    Pdo,
-    IN  ULONG           DataType,
-    IN  PVOID           Buffer,
-    IN  ULONG           Offset,
-    IN  ULONG           Length
+    _In_ PXENVKBD_PDO   Pdo,
+    _In_ ULONG          DataType,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Offset,
+    _In_ ULONG          Length
     );
 
 extern ULONG
 PdoGetBusData(
-    IN  PXENVKBD_PDO    Pdo,
-    IN  ULONG           DataType,
-    IN  PVOID           Buffer,
-    IN  ULONG           Offset,
-    IN  ULONG           Length
+    _In_ PXENVKBD_PDO   Pdo,
+    _In_ ULONG          DataType,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Offset,
+    _In_ ULONG          Length
     );
 
 extern NTSTATUS
 PdoCreate(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  PANSI_STRING    Path
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ PANSI_STRING   Path
     );
 
 extern NTSTATUS
 PdoResume(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 PdoSuspend(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 PdoDestroy(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 #include "frontend.h"
 
 extern PXENVKBD_FRONTEND
 PdoGetFrontend(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 #include "hid.h"
 
 extern PXENVKBD_HID_CONTEXT
 PdoGetHidContext(
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern NTSTATUS
 PdoDispatch(
-    IN  PXENVKBD_PDO    Pdo,
-    IN  PIRP            Irp
+    _In_ PXENVKBD_PDO   Pdo,
+    _In_ PIRP           Irp
     );
 
 #endif  // _XENVKBD_PDO_H

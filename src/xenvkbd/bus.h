@@ -40,13 +40,13 @@
 
 extern NTSTATUS
 BusInitialize(
-    IN  PXENVKBD_PDO            Pdo,
-    OUT PBUS_INTERFACE_STANDARD Interface
+    _In_ PXENVKBD_PDO               Pdo,
+    _Out_ PBUS_INTERFACE_STANDARD   Interface
     );
 
 extern VOID
 BusTeardown(
-    IN OUT  PBUS_INTERFACE_STANDARD Interface
+    _Inout_ PBUS_INTERFACE_STANDARD Interface
     );
 
 #endif  // _XENVKBD_BUS_H

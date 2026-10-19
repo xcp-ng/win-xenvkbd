@@ -38,7 +38,7 @@
 
 static FORCEINLINE const CHAR *
 PowerTypeName(
-    IN  POWER_STATE_TYPE    Type
+    _In_ POWER_STATE_TYPE   Type
     )
 {
 #define _POWER_TYPE_NAME(_Type) \
@@ -58,7 +58,7 @@ PowerTypeName(
 
 static FORCEINLINE const CHAR *
 PowerSystemStateName(
-    IN  SYSTEM_POWER_STATE State
+    _In_ SYSTEM_POWER_STATE State
     )
 {
 #define _POWER_SYSTEM_STATE_NAME(_State)    \
@@ -84,7 +84,7 @@ PowerSystemStateName(
 
 static FORCEINLINE const CHAR *
 PowerDeviceStateName(
-    IN  DEVICE_POWER_STATE State
+    _In_ DEVICE_POWER_STATE State
     )
 {
 #define _POWER_DEVICE_STATE_NAME(_State)    \
@@ -108,7 +108,7 @@ PowerDeviceStateName(
 
 static FORCEINLINE const CHAR *
 PowerActionName(
-    IN  POWER_ACTION    Type
+    _In_ POWER_ACTION   Type
     )
 {
 #define _POWER_ACTION_NAME(_Type)   \
@@ -134,7 +134,7 @@ PowerActionName(
 
 static FORCEINLINE const CHAR *
 PowerMinorFunctionName(
-    IN  ULONG   MinorFunction
+    _In_ ULONG  MinorFunction
     )
 {
 #define _POWER_MINOR_FUNCTION_NAME(_Function)   \
@@ -157,7 +157,7 @@ PowerMinorFunctionName(
 
 static FORCEINLINE const CHAR *
 PnpMinorFunctionName(
-    IN  ULONG   Function
+    _In_ ULONG  Function
     )
 {
 #define _PNP_MINOR_FUNCTION_NAME(_Function) \
@@ -200,7 +200,7 @@ PnpMinorFunctionName(
 
 static FORCEINLINE const CHAR *
 PartialResourceDescriptorTypeName(
-    IN  UCHAR   Type
+    _In_ UCHAR  Type
     )
 {
 #define _PARTIAL_RESOURCE_DESCRIPTOR_TYPE_NAME(_Type)   \
@@ -229,7 +229,7 @@ PartialResourceDescriptorTypeName(
 
 static FORCEINLINE const CHAR *
 DeviceUsageTypeName(
-    IN  DEVICE_USAGE_NOTIFICATION_TYPE  Type
+    _In_ DEVICE_USAGE_NOTIFICATION_TYPE Type
     )
 {
 #define _DEVICE_USAGE_TYPE_NAME(_Type)  \
@@ -251,7 +251,7 @@ DeviceUsageTypeName(
 
 static FORCEINLINE const CHAR *
 InterfaceTypeName(
-    IN  INTERFACE_TYPE  Type
+    _In_ INTERFACE_TYPE Type
     )
 {
 #define _INTERFACE_TYPE_NAME(_Type) \
@@ -289,7 +289,7 @@ InterfaceTypeName(
 
 static FORCEINLINE const CHAR *
 DmaWidthName(
-    IN  DMA_WIDTH   Width
+    _In_ DMA_WIDTH  Width
     )
 {
 #define _DMA_WIDTH_NAME(_Width) \
@@ -313,7 +313,7 @@ DmaWidthName(
 
 static FORCEINLINE const CHAR *
 DmaSpeedName(
-    IN  DMA_SPEED   Speed
+    _In_ DMA_SPEED  Speed
     )
 {
 #define _DMA_SPEED_NAME(_Speed) \
@@ -338,7 +338,7 @@ DmaSpeedName(
 
 static FORCEINLINE const PCHAR
 XenbusStateName(
-    IN  XenbusState   State
+    _In_ XenbusState    State
     )
 {
 #define _STATE_NAME(_State)     \

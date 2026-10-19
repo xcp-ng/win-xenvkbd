@@ -56,64 +56,64 @@ typedef enum _XENVKBD_FRONTEND_STATE {
     FRONTEND_ENABLED
 } XENVKBD_FRONTEND_STATE, *PXENVKBD_FRONTEND_STATE;
 
-__drv_requiresIRQL(PASSIVE_LEVEL)
+_IRQL_requires_(PASSIVE_LEVEL)
 extern NTSTATUS
 FrontendInitialize(
-    IN  PXENVKBD_PDO        Pdo,
-    OUT PXENVKBD_FRONTEND   *Frontend
+    _In_ PXENVKBD_PDO           Pdo,
+    _Outptr_ PXENVKBD_FRONTEND  *Frontend
     );
 
 extern VOID
 FrontendTeardown(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern VOID
 FrontendEjectFailed(
-    IN PXENVKBD_FRONTEND    Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern NTSTATUS
 FrontendSetState(
-    IN  PXENVKBD_FRONTEND       Frontend,
-    IN  XENVKBD_FRONTEND_STATE  State
+    _In_ PXENVKBD_FRONTEND      Frontend,
+    _In_ XENVKBD_FRONTEND_STATE State
     );
 
 extern NTSTATUS
 FrontendResume(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern VOID
 FrontendSuspend(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern PXENVKBD_PDO
 FrontendGetPdo(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern PCHAR
 FrontendGetPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern PCHAR
 FrontendGetBackendPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 extern USHORT
 FrontendGetBackendDomain(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 #include "ring.h"
 
 extern PXENVKBD_RING
 FrontendGetRing(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     );
 
 #endif  // _XENVKBD_FRONTEND_H

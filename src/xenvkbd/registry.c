@@ -47,7 +47,7 @@ static IOOPENDRIVERREGISTRYKEY __IoOpenDriverRegistryKey;
 
 static FORCEINLINE PVOID
 __RegistryAllocate(
-    IN  ULONG   Length
+    _In_ ULONG  Length
     )
 {
     return __AllocatePoolWithTag(NonPagedPool, Length, REGISTRY_TAG);
@@ -55,7 +55,7 @@ __RegistryAllocate(
 
 static FORCEINLINE VOID
 __RegistryFree(
-    IN  PVOID   Buffer
+    _In_ PVOID  Buffer
     )
 {
     __FreePoolWithTag(Buffer, REGISTRY_TAG);
@@ -63,10 +63,10 @@ __RegistryFree(
 
 NTSTATUS
 RegistryInitialize(
-    IN PUNICODE_STRING  Path
+    _In_ PUNICODE_STRING    Path
     )
 {
-    NTSTATUS            status;
+    NTSTATUS                status;
 
     ASSERT3P(RegistryPath.Buffer, ==, NULL);
 
@@ -146,14 +146,14 @@ fail1:
 
 NTSTATUS
 RegistryOpenKey(
-    IN  HANDLE          Parent,
-    IN  PUNICODE_STRING Path,
-    IN  ACCESS_MASK     DesiredAccess,
-    OUT PHANDLE         Key
+    _In_ HANDLE             Parent,
+    _In_ PUNICODE_STRING    Path,
+    _In_ ACCESS_MASK        DesiredAccess,
+    _Out_ PHANDLE           Key
     )
 {
-    OBJECT_ATTRIBUTES   Attributes;
-    NTSTATUS            status;
+    OBJECT_ATTRIBUTES       Attributes;
+    NTSTATUS                status;
 
     InitializeObjectAttributes(&Attributes,
                                Path,
@@ -208,19 +208,19 @@ fail1:
 
 NTSTATUS
 RegistryCreateKey(
-    IN  HANDLE          Parent,
-    IN  PUNICODE_STRING Path,
-    IN  ULONG           Options,
-    OUT PHANDLE         Key
+    _In_ HANDLE             Parent,
+    _In_ PUNICODE_STRING    Path,
+    _In_ ULONG              Options,
+    _Out_ PHANDLE           Key
     )
 {
-    PWSTR               Buffer;
-    HANDLE              Root;
-    PWSTR               ChildPath;
-    PWSTR               ChildName;
-    PWSTR               Context;
-    HANDLE              Child;
-    NTSTATUS            status;
+    PWCHAR                  Buffer;
+    HANDLE                  Root;
+    PWCHAR                  ChildPath;
+    PWCHAR                  ChildName;
+    PWCHAR                  Context;
+    HANDLE                  Child;
+    NTSTATUS                status;
 
     //
     // UNICODE_STRINGs are not guaranteed to have NUL terminated
@@ -308,8 +308,8 @@ fail1:
 
 NTSTATUS
 RegistryOpenServiceKey(
-    IN  ACCESS_MASK     DesiredAccess,
-    OUT PHANDLE         Key
+    _In_ ACCESS_MASK    DesiredAccess,
+    _Out_ PHANDLE       Key
     )
 {
     return RegistryOpenKey(NULL, &RegistryPath, DesiredAccess, Key);
@@ -325,9 +325,9 @@ RegistryCreateServiceKey(
 
 NTSTATUS
 RegistryOpenSoftwareKey(
-    IN  PDEVICE_OBJECT  DeviceObject,
-    IN  ACCESS_MASK     DesiredAccess,
-    OUT PHANDLE         Key
+    _In_ PDEVICE_OBJECT DeviceObject,
+    _In_ ACCESS_MASK    DesiredAccess,
+    _Out_ PHANDLE       Key
     )
 {
     NTSTATUS            status;
@@ -347,9 +347,9 @@ fail1:
 
 NTSTATUS
 RegistryOpenHardwareKey(
-    IN  PDEVICE_OBJECT      DeviceObject,
-    IN  ACCESS_MASK         DesiredAccess,
-    OUT PHANDLE             Key
+    _In_ PDEVICE_OBJECT     DeviceObject,
+    _In_ ACCESS_MASK        DesiredAccess,
+    _Out_ PHANDLE           Key
     )
 {
     HANDLE                  SubKey;
@@ -490,8 +490,8 @@ fail1:
 
 NTSTATUS
 RegistryDeleteSubKey(
-    IN  PHANDLE         Key,
-    IN  PCHAR           Name
+    _In_ PHANDLE        Key,
+    _In_ PCHAR          Name
     )
 {
     ANSI_STRING         Ansi;
@@ -531,9 +531,9 @@ fail1:
 
 NTSTATUS
 RegistryEnumerateSubKeys(
-    IN  HANDLE              Key,
-    IN  NTSTATUS            (*Callback)(PVOID, HANDLE, PANSI_STRING),
-    IN  PVOID               Context
+    _In_ HANDLE             Key,
+    _In_ NTSTATUS           (*Callback)(PVOID, HANDLE, PANSI_STRING),
+    _In_ PVOID              Context
     )
 {
     ULONG                   Size;
@@ -634,9 +634,9 @@ fail1:
 
 NTSTATUS
 RegistryEnumerateValues(
-    IN  HANDLE                      Key,
-    IN  NTSTATUS                    (*Callback)(PVOID, HANDLE, PANSI_STRING, ULONG),
-    IN  PVOID                       Context
+    _In_ HANDLE                     Key,
+    _In_ NTSTATUS                   (*Callback)(PVOID, HANDLE, PANSI_STRING, ULONG),
+    _In_ PVOID                      Context
     )
 {
     ULONG                           Size;
@@ -740,8 +740,8 @@ fail1:
 
 NTSTATUS
 RegistryDeleteValue(
-    IN  PHANDLE         Key,
-    IN  PCHAR           Name
+    _In_ PHANDLE        Key,
+    _In_ PCHAR          Name
     )
 {
     ANSI_STRING         Ansi;
@@ -771,9 +771,9 @@ fail1:
 
 NTSTATUS
 RegistryQueryDwordValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    OUT PULONG                      Value
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _Out_ PULONG                    Value
     )
 {
     ANSI_STRING                     Ansi;
@@ -911,9 +911,9 @@ fail1:
 
 NTSTATUS
 RegistryUpdateDwordValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    IN  ULONG                       Value
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _In_ ULONG                      Value
     )
 {
     ANSI_STRING                     Ansi;
@@ -967,7 +967,7 @@ fail1:
 
 static PANSI_STRING
 RegistrySzToAnsi(
-    IN  PWCHAR      Buffer
+    _In_ PWCHAR     Buffer
     )
 {
     PANSI_STRING    Ansi;
@@ -1006,7 +1006,7 @@ fail1:
 
 static PANSI_STRING
 RegistryMultiSzToAnsi(
-    IN  PWCHAR      Buffer
+    _In_ PWCHAR     Buffer
     )
 {
     PANSI_STRING    Ansi;
@@ -1068,10 +1068,10 @@ fail1:
 
 NTSTATUS
 RegistryQuerySzValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    OUT PULONG                      Type OPTIONAL,
-    OUT PANSI_STRING                *Array
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _Out_opt_ PULONG                Type,
+    _Outptr_ PANSI_STRING           *Array
     )
 {
     ANSI_STRING                     Ansi;
@@ -1155,10 +1155,10 @@ fail1:
 
 NTSTATUS
 RegistryQueryBinaryValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    OUT PVOID                       *Buffer,
-    OUT PULONG                      Length
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _Outptr_ PVOID                  *Buffer,
+    _Out_ PULONG                    Length
     )
 {
     ANSI_STRING                     Ansi;
@@ -1240,10 +1240,10 @@ fail1:
 
 NTSTATUS
 RegistryUpdateBinaryValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    IN  PVOID                       Buffer,
-    IN  ULONG                       Length
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _In_ PVOID                      Buffer,
+    _In_ ULONG                      Length
     )
 {
     ANSI_STRING                     Ansi;
@@ -1297,8 +1297,8 @@ fail1:
 
 NTSTATUS
 RegistryQueryKeyName(
-    IN  HANDLE              Key,
-    OUT PANSI_STRING        *Array
+    _In_ HANDLE             Key,
+    _Outptr_ PANSI_STRING   *Array
     )
 {
     PKEY_NAME_INFORMATION   Value;
@@ -1352,8 +1352,8 @@ fail1:
 
 NTSTATUS
 RegistryQuerySystemStartOption(
-    IN  PCHAR                       Prefix,
-    OUT PANSI_STRING                *Value
+    _In_ PCHAR                      Prefix,
+    _Outptr_ PANSI_STRING           *Value
     )
 {
     UNICODE_STRING                  Unicode;
@@ -1535,10 +1535,10 @@ fail1:
 
 NTSTATUS
 RegistryUpdateSzValue(
-    IN  HANDLE                      Key,
-    IN  PCHAR                       Name,
-    IN  ULONG                       Type,
-    IN  PANSI_STRING                Array
+    _In_ HANDLE                     Key,
+    _In_ PCHAR                      Name,
+    _In_ ULONG                      Type,
+    _In_ PANSI_STRING               Array
     )
 {
     ANSI_STRING                     Ansi;
@@ -1599,7 +1599,7 @@ fail1:
 
 VOID
 RegistryFreeSzValue(
-    IN  PANSI_STRING    Array
+    _In_ PANSI_STRING   Array
     )
 {
     ULONG               Index;
@@ -1615,7 +1615,7 @@ RegistryFreeSzValue(
 
 VOID
 RegistryFreeBinaryValue(
-    IN  PVOID   Buffer
+    _In_ PVOID  Buffer
     )
 {
     __RegistryFree(Buffer);
@@ -1623,7 +1623,7 @@ RegistryFreeBinaryValue(
 
 VOID
 RegistryCloseKey(
-    IN  HANDLE  Key
+    _In_ HANDLE Key
     )
 {
     ZwClose(Key);

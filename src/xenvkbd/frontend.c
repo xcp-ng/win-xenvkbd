@@ -72,7 +72,7 @@ struct _XENVKBD_FRONTEND {
 
 static const PCHAR
 FrontendStateName(
-    IN  XENVKBD_FRONTEND_STATE  State
+    _In_ XENVKBD_FRONTEND_STATE State
     )
 {
 #define _STATE_NAME(_State)     \
@@ -98,7 +98,7 @@ FrontendStateName(
 
 static FORCEINLINE PVOID
 __FrontendAllocate(
-    IN  ULONG   Length
+    _In_ ULONG  Length
     )
 {
     return __AllocatePoolWithTag(NonPagedPool, Length, FRONTEND_POOL);
@@ -106,7 +106,7 @@ __FrontendAllocate(
 
 static FORCEINLINE VOID
 __FrontendFree(
-    IN  PVOID   Buffer
+    _In_ PVOID  Buffer
     )
 {
     __FreePoolWithTag(Buffer, FRONTEND_POOL);
@@ -114,7 +114,7 @@ __FrontendFree(
 
 static FORCEINLINE PXENVKBD_PDO
 __FrontendGetPdo(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return Frontend->Pdo;
@@ -122,7 +122,7 @@ __FrontendGetPdo(
 
 PXENVKBD_PDO
 FrontendGetPdo(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return __FrontendGetPdo(Frontend);
@@ -130,7 +130,7 @@ FrontendGetPdo(
 
 static FORCEINLINE PCHAR
 __FrontendGetPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return Frontend->Path;
@@ -138,7 +138,7 @@ __FrontendGetPath(
 
 PCHAR
 FrontendGetPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return __FrontendGetPath(Frontend);
@@ -146,7 +146,7 @@ FrontendGetPath(
 
 static FORCEINLINE PCHAR
 __FrontendGetBackendPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return Frontend->BackendPath;
@@ -154,7 +154,7 @@ __FrontendGetBackendPath(
 
 PCHAR
 FrontendGetBackendPath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return __FrontendGetBackendPath(Frontend);
@@ -162,7 +162,7 @@ FrontendGetBackendPath(
 
 static FORCEINLINE USHORT
 __FrontendGetBackendDomain(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return Frontend->BackendDomain;
@@ -170,7 +170,7 @@ __FrontendGetBackendDomain(
 
 USHORT
 FrontendGetBackendDomain(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return __FrontendGetBackendDomain(Frontend);
@@ -179,7 +179,7 @@ FrontendGetBackendDomain(
 #define DEFINE_FRONTEND_GET_FUNCTION(_Function, _Type)  \
 static FORCEINLINE _Type                                \
 __FrontendGet ## _Function(                             \
-    IN  PXENVKBD_FRONTEND   Frontend                    \
+    _In_ PXENVKBD_FRONTEND   Frontend                    \
     )                                                   \
 {                                                       \
     return Frontend-> ## _Function;                     \
@@ -187,7 +187,7 @@ __FrontendGet ## _Function(                             \
                                                         \
 _Type                                                   \
 FrontendGet ## _Function(                               \
-    IN  PXENVKBD_FRONTEND   Frontend                    \
+    _In_ PXENVKBD_FRONTEND   Frontend                    \
     )                                                   \
 {                                                       \
     return __FrontendGet ## _Function ## (Frontend);    \
@@ -197,7 +197,7 @@ DEFINE_FRONTEND_GET_FUNCTION(Ring, PXENVKBD_RING)
 
 static BOOLEAN
 FrontendIsOnline(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     return Frontend->Online;
@@ -205,7 +205,7 @@ FrontendIsOnline(
 
 static BOOLEAN
 FrontendIsBackendOnline(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     PCHAR                   Buffer;
@@ -233,12 +233,12 @@ FrontendIsBackendOnline(
 
 static DECLSPEC_NOINLINE NTSTATUS
 FrontendEject(
-    IN  PXENVKBD_THREAD Self,
-    IN  PVOID           Context
+    _In_ PXENVKBD_THREAD    Self,
+    _In_ PVOID              Context
     )
 {
-    PXENVKBD_FRONTEND    Frontend = Context;
-    PKEVENT             Event;
+    PXENVKBD_FRONTEND       Frontend = Context;
+    PKEVENT                 Event;
 
     Trace("%s: ====>\n", __FrontendGetPath(Frontend));
 
@@ -285,7 +285,7 @@ loop:
 
 VOID
 FrontendEjectFailed(
-    IN PXENVKBD_FRONTEND    Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     KIRQL                   Irql;
@@ -336,7 +336,7 @@ fail1:
 
 static VOID
 FrontendSetOnline(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     Trace("====>\n");
@@ -348,7 +348,7 @@ FrontendSetOnline(
 
 static VOID
 FrontendSetOffline(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     Trace("====>\n");
@@ -361,8 +361,8 @@ FrontendSetOffline(
 
 static VOID
 FrontendSetXenbusState(
-    IN  PXENVKBD_FRONTEND   Frontend,
-    IN  XenbusState         State
+    _In_ PXENVKBD_FRONTEND  Frontend,
+    _In_ XenbusState        State
     )
 {
     BOOLEAN                 Online;
@@ -393,8 +393,8 @@ FrontendSetXenbusState(
 
 static VOID
 FrontendWaitForBackendXenbusStateChange(
-    IN      PXENVKBD_FRONTEND   Frontend,
-    IN OUT  XenbusState         *State
+    _In_ PXENVKBD_FRONTEND      Frontend,
+    _Inout_ XenbusState         *State
     )
 {
     KEVENT                      Event;
@@ -487,7 +487,7 @@ FrontendWaitForBackendXenbusStateChange(
 
 static NTSTATUS
 FrontendUpdatePath(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     ULONG                   Length;
@@ -553,7 +553,7 @@ fail1:
 
 static NTSTATUS
 FrontendClose(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     XenbusState             State;
@@ -618,7 +618,7 @@ fail1:
 
 static NTSTATUS
 FrontendPrepare(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     XenbusState             State;
@@ -667,7 +667,7 @@ fail1:
 
 static NTSTATUS
 FrontendConnect(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     XenbusState             State;
@@ -744,7 +744,7 @@ fail1:
 
 static VOID
 FrontendDisconnect(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     Trace("====>\n");
@@ -756,7 +756,7 @@ FrontendDisconnect(
 
 static NTSTATUS
 FrontendEnable(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     NTSTATUS                status;
@@ -778,7 +778,7 @@ fail1:
 
 static VOID
 FrontendDisable(
-    IN  PXENVKBD_FRONTEND    Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     Trace("====>\n");
@@ -790,8 +790,8 @@ FrontendDisable(
 
 NTSTATUS
 FrontendSetState(
-    IN  PXENVKBD_FRONTEND       Frontend,
-    IN  XENVKBD_FRONTEND_STATE  State
+    _In_ PXENVKBD_FRONTEND      Frontend,
+    _In_ XENVKBD_FRONTEND_STATE State
     )
 {
     NTSTATUS                    status;
@@ -938,7 +938,7 @@ FrontendSetState(
 
 static FORCEINLINE VOID
 __FrontendResume(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     ASSERT3U(KeGetCurrentIrql(), ==, DISPATCH_LEVEL);
@@ -949,7 +949,7 @@ __FrontendResume(
 
 static FORCEINLINE VOID
 __FrontendSuspend(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     ASSERT3U(KeGetCurrentIrql(), ==, DISPATCH_LEVEL);
@@ -959,7 +959,7 @@ __FrontendSuspend(
 
 static DECLSPEC_NOINLINE VOID
 FrontendSuspendCallbackEarly(
-    IN  PVOID           Argument
+    _In_ PVOID          Argument
     )
 {
     PXENVKBD_FRONTEND   Frontend = Argument;
@@ -969,7 +969,7 @@ FrontendSuspendCallbackEarly(
 
 static DECLSPEC_NOINLINE VOID
 FrontendSuspendCallbackLate(
-    IN  PVOID           Argument
+    _In_ PVOID          Argument
     )
 {
     PXENVKBD_FRONTEND   Frontend = Argument;
@@ -980,7 +980,7 @@ FrontendSuspendCallbackLate(
 
 NTSTATUS
 FrontendResume(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     KIRQL                   Irql;
@@ -1056,7 +1056,7 @@ fail1:
 
 VOID
 FrontendSuspend(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     KIRQL                   Irql;
@@ -1095,17 +1095,17 @@ FrontendSuspend(
     Trace("<====\n");
 }
 
-__drv_requiresIRQL(PASSIVE_LEVEL)
+_IRQL_requires_(PASSIVE_LEVEL)
 NTSTATUS
 FrontendInitialize(
-    IN  PXENVKBD_PDO        Pdo,
-    OUT PXENVKBD_FRONTEND   *Frontend
+    _In_ PXENVKBD_PDO           Pdo,
+    _Outptr_ PXENVKBD_FRONTEND  *Frontend
     )
 {
-    PCHAR                   Name;
-    ULONG                   Length;
-    PCHAR                   Path;
-    NTSTATUS                status;
+    PCHAR                       Name;
+    ULONG                       Length;
+    PCHAR                       Path;
+    NTSTATUS                    status;
 
     Trace("====>\n");
 
@@ -1204,7 +1204,7 @@ fail1:
 
 VOID
 FrontendTeardown(
-    IN  PXENVKBD_FRONTEND   Frontend
+    _In_ PXENVKBD_FRONTEND  Frontend
     )
 {
     Trace("====>\n");

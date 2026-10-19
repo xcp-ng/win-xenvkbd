@@ -39,37 +39,37 @@ typedef struct _XENVKBD_THREAD XENVKBD_THREAD, *PXENVKBD_THREAD;
 
 typedef NTSTATUS (*XENVKBD_THREAD_FUNCTION)(PXENVKBD_THREAD, PVOID);
 
-__drv_requiresIRQL(PASSIVE_LEVEL)
+_IRQL_requires_(PASSIVE_LEVEL)
 extern NTSTATUS
 ThreadCreate(
-    IN  XENVKBD_THREAD_FUNCTION Function,
-    IN  PVOID                   Context,
-    OUT PXENVKBD_THREAD         *Thread
+    _In_ XENVKBD_THREAD_FUNCTION    Function,
+    _In_ PVOID                      Context,
+    _Outptr_ PXENVKBD_THREAD        *Thread
     );
 
 extern PKEVENT
 ThreadGetEvent(
-    IN  PXENVKBD_THREAD Self
+    _In_ PXENVKBD_THREAD    Self
     );
 
 extern BOOLEAN
 ThreadIsAlerted(
-    IN  PXENVKBD_THREAD Self
+    _In_ PXENVKBD_THREAD    Self
     );
 
 extern VOID
 ThreadWake(
-    IN  PXENVKBD_THREAD Thread
+    _In_ PXENVKBD_THREAD    Thread
     );
 
 extern VOID
 ThreadAlert(
-    IN  PXENVKBD_THREAD Thread
+    _In_ PXENVKBD_THREAD    Thread
     );
 
 extern VOID
 ThreadJoin(
-    IN  PXENVKBD_THREAD Thread
+    _In_ PXENVKBD_THREAD    Thread
     );
 
 #endif  // _XENVKBD_THREAD_H
