@@ -146,7 +146,7 @@ fail1:
 
 NTSTATUS
 RegistryOpenKey(
-    _In_ HANDLE             Parent,
+    _In_opt_ HANDLE         Parent,
     _In_ PUNICODE_STRING    Path,
     _In_ ACCESS_MASK        DesiredAccess,
     _Out_ PHANDLE           Key
@@ -208,7 +208,7 @@ fail1:
 
 NTSTATUS
 RegistryCreateKey(
-    _In_ HANDLE             Parent,
+    _In_opt_ HANDLE         Parent,
     _In_ PUNICODE_STRING    Path,
     _In_ ULONG              Options,
     _Out_ PHANDLE           Key
@@ -1240,10 +1240,10 @@ fail1:
 
 NTSTATUS
 RegistryUpdateBinaryValue(
-    _In_ HANDLE                       Key,
-    _In_ PSTR                         Name,
-    _In_reads_bytes_(Length) PVOID    Buffer,
-    _In_ ULONG                        Length
+    _In_ HANDLE                     Key,
+    _In_ PSTR                       Name,
+    _In_reads_bytes_(Length) PVOID  Buffer,
+    _In_ ULONG                      Length
     )
 {
     ANSI_STRING                     Ansi;
