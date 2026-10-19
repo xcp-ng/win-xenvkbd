@@ -898,8 +898,8 @@ __FdoFreeAnsi(
 
 static NTSTATUS
 FdoScan(
-    PXENVKBD_THREAD     Self,
-    PVOID               Context
+    _In_ PXENVKBD_THREAD Self,
+    _In_ PVOID           Context
     )
 {
     PXENVKBD_FDO        Fdo = Context;
