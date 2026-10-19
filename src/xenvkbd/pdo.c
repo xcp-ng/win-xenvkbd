@@ -200,7 +200,7 @@ __PdoGetDevicePowerState(
 static FORCEINLINE VOID
 __PdoSetMissing(
     _In_ PXENVKBD_PDO   Pdo,
-    _In_ const CHAR     *Reason
+    _In_ PCSTR          Reason
     )
 {
     Pdo->Reason = Reason;
@@ -210,7 +210,7 @@ __PdoSetMissing(
 VOID
 PdoSetMissing(
     _In_ PXENVKBD_PDO   Pdo,
-    _In_ const CHAR     *Reason
+    _In_ PCSTR          Reason
     )
 {
     __PdoSetMissing(Pdo, Reason);
@@ -251,7 +251,7 @@ PdoGetFdo(
 static FORCEINLINE VOID
 __PdoSetName(
     _In_ PXENVKBD_PDO   Pdo,
-    _In_ PCHAR          Path
+    _In_ PSTR           Path
     )
 {
     PXENVKBD_DX         Dx = Pdo->Dx;

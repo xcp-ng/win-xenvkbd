@@ -491,7 +491,7 @@ fail1:
 NTSTATUS
 RegistryDeleteSubKey(
     _In_ PHANDLE        Key,
-    _In_ PCHAR          Name
+    _In_ PSTR           Name
     )
 {
     ANSI_STRING         Ansi;
@@ -741,7 +741,7 @@ fail1:
 NTSTATUS
 RegistryDeleteValue(
     _In_ PHANDLE        Key,
-    _In_ PCHAR          Name
+    _In_ PSTR           Name
     )
 {
     ANSI_STRING         Ansi;
@@ -772,7 +772,7 @@ fail1:
 NTSTATUS
 RegistryQueryDwordValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _Out_ PULONG                    Value
     )
 {
@@ -912,7 +912,7 @@ fail1:
 NTSTATUS
 RegistryUpdateDwordValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _In_ ULONG                      Value
     )
 {
@@ -967,7 +967,7 @@ fail1:
 
 static PANSI_STRING
 RegistrySzToAnsi(
-    _In_ PWCHAR     Buffer
+    _In_ PWSTR      Buffer
     )
 {
     PANSI_STRING    Ansi;
@@ -1006,7 +1006,7 @@ fail1:
 
 static PANSI_STRING
 RegistryMultiSzToAnsi(
-    _In_ PWCHAR     Buffer
+    _In_ PWSTR      Buffer
     )
 {
     PANSI_STRING    Ansi;
@@ -1069,7 +1069,7 @@ fail1:
 NTSTATUS
 RegistryQuerySzValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _Out_opt_ PULONG                Type,
     _Outptr_ PANSI_STRING           *Array
     )
@@ -1156,7 +1156,7 @@ fail1:
 NTSTATUS
 RegistryQueryBinaryValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _Outptr_ PVOID                  *Buffer,
     _Out_ PULONG                    Length
     )
@@ -1241,7 +1241,7 @@ fail1:
 NTSTATUS
 RegistryUpdateBinaryValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _In_ PVOID                      Buffer,
     _In_ ULONG                      Length
     )
@@ -1352,7 +1352,7 @@ fail1:
 
 NTSTATUS
 RegistryQuerySystemStartOption(
-    _In_ PCHAR                      Prefix,
+    _In_ PSTR                       Prefix,
     _Outptr_ PANSI_STRING           *Value
     )
 {
@@ -1536,7 +1536,7 @@ fail1:
 NTSTATUS
 RegistryUpdateSzValue(
     _In_ HANDLE                     Key,
-    _In_ PCHAR                      Name,
+    _In_ PSTR                       Name,
     _In_ ULONG                      Type,
     _In_ PANSI_STRING               Array
     )
