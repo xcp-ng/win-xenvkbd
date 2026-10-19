@@ -275,14 +275,15 @@ fail1:
 
 DRIVER_DISPATCH Dispatch;
 
+_Use_decl_annotations_
 NTSTATUS 
 Dispatch(
-    _In_ PDEVICE_OBJECT DeviceObject,
-    _In_ PIRP           Irp
+    PDEVICE_OBJECT DeviceObject,
+    PIRP           Irp
     )
 {
-    PXENVKBD_DX         Dx;
-    NTSTATUS            status;
+    PXENVKBD_DX    Dx;
+    NTSTATUS       status;
 
     Dx = (PXENVKBD_DX)DeviceObject->DeviceExtension;
     ASSERT3P(Dx->DeviceObject, ==, DeviceObject);
