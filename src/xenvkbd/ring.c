@@ -109,11 +109,11 @@ __RingFree(
 
 static FORCEINLINE NTSTATUS
 __RingCopyBuffer(
-    _Out_writes_bytes_opt_(Length) PVOID    Buffer,
-    _In_ ULONG                              Length,
-    _In_ const VOID                         *Source,
-    _In_ ULONG                              SourceLength,
-    _Out_ PULONG                            Returned
+    _Out_writes_bytes_opt_(Length) PVOID         Buffer,
+    _In_ ULONG                                   Length,
+    _In_reads_bytes_(SourceLength) const VOID    *Source,
+    _In_ ULONG                                   SourceLength,
+    _Out_ PULONG                                 Returned
     )
 {
     if (Buffer == NULL)

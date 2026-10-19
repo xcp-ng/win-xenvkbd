@@ -126,11 +126,11 @@ static
 _Function_class_(GET_SET_DEVICE_DATA)
 ULONG
 BusSetData(
-    _In_ PVOID              _Context,
-    _In_ ULONG              DataType,
-    _In_ PVOID              Buffer,
-    _In_ ULONG              Offset,
-    _In_ ULONG              Length
+    _In_ PVOID                             _Context,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     )
 {
     PXENVKBD_BUS_CONTEXT    Context = _Context;
@@ -146,11 +146,11 @@ static
 _Function_class_(GET_SET_DEVICE_DATA)
 ULONG
 BusGetData(
-    _In_ PVOID              _Context,
-    _In_ ULONG              DataType,
-    _In_ PVOID              Buffer,
-    _In_ ULONG              Offset,
-    _In_ ULONG              Length
+    _In_ PVOID                             _Context,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     )
 {
     PXENVKBD_BUS_CONTEXT    Context = _Context;

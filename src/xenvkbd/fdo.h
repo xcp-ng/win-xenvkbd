@@ -100,20 +100,20 @@ FdoTranslateBusAddress(
 
 extern ULONG
 FdoSetBusData(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ ULONG          DataType,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Offset,
-    _In_ ULONG          Length
+    _In_ PXENVKBD_FDO                      Fdo,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     );
 
 extern ULONG
 FdoGetBusData(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ ULONG          DataType,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Offset,
-    _In_ ULONG          Length
+    _In_ PXENVKBD_FDO                      Fdo,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     );
 
 extern NTSTATUS
