@@ -47,92 +47,92 @@
 
 extern PCHAR
 FdoGetVendorName(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 extern PCHAR
 FdoGetName(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 extern NTSTATUS
 FdoAddPhysicalDeviceObject(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 FdoRemovePhysicalDeviceObject(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  PXENVKBD_PDO    Pdo
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ PXENVKBD_PDO   Pdo
     );
 
 extern VOID
 FdoAcquireMutex(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 extern VOID
 FdoReleaseMutex(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 extern PDEVICE_OBJECT
 FdoGetPhysicalDeviceObject(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 extern PDMA_ADAPTER
 FdoGetDmaAdapter(
-    IN  PXENVKBD_FDO        Fdo,
-    IN  PDEVICE_DESCRIPTION DeviceDescriptor,
-    OUT PULONG              NumberOfMapRegisters
+    _In_ PXENVKBD_FDO           Fdo,
+    _In_ PDEVICE_DESCRIPTION    DeviceDescriptor,
+    _Out_ PULONG                NumberOfMapRegisters
     );
 
 extern BOOLEAN
 FdoTranslateBusAddress(
-    IN      PXENVKBD_FDO        Fdo,
-    IN      PHYSICAL_ADDRESS    BusAddress,
-    IN      ULONG               Length,
-    IN OUT  PULONG              AddressSpace,
-    OUT     PPHYSICAL_ADDRESS   TranslatedAddress
+    _In_ PXENVKBD_FDO       Fdo,
+    _In_ PHYSICAL_ADDRESS   BusAddress,
+    _In_ ULONG              Length,
+    _Inout_ PULONG          AddressSpace,
+    _Out_ PPHYSICAL_ADDRESS TranslatedAddress
     );
 
 extern ULONG
 FdoSetBusData(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  ULONG           DataType,
-    IN  PVOID           Buffer,
-    IN  ULONG           Offset,
-    IN  ULONG           Length
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ ULONG          DataType,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Offset,
+    _In_ ULONG          Length
     );
 
 extern ULONG
 FdoGetBusData(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  ULONG           DataType,
-    IN  PVOID           Buffer,
-    IN  ULONG           Offset,
-    IN  ULONG           Length
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ ULONG          DataType,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Offset,
+    _In_ ULONG          Length
     );
 
 extern NTSTATUS
 FdoDelegateIrp(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  PIRP            Irp
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ PIRP           Irp
     );
 
 extern NTSTATUS
 FdoDispatch(
-    IN  PXENVKBD_FDO    Fdo,
-    IN  PIRP            Irp
+    _In_ PXENVKBD_FDO   Fdo,
+    _In_ PIRP           Irp
     );
 
 #define DECLARE_FDO_GET_INTERFACE(_Interface, _Type)    \
 extern VOID                                             \
 FdoGet ## _Interface ## Interface(                      \
-    IN  PXENVKBD_FDO Fdo,                                \
-    OUT _Type       _Interface ## Interface             \
+    _In_ PXENVKBD_FDO Fdo,                                \
+    _Out_ _Type       _Interface ## Interface             \
     );
 
 DECLARE_FDO_GET_INTERFACE(Debug, PXENBUS_DEBUG_INTERFACE)
@@ -145,12 +145,12 @@ DECLARE_FDO_GET_INTERFACE(Gnttab, PXENBUS_GNTTAB_INTERFACE)
 
 extern NTSTATUS
 FdoCreate(
-    IN  PDEVICE_OBJECT  PhysicalDeviceObject
+    _In_ PDEVICE_OBJECT PhysicalDeviceObject
     );
 
 extern VOID
 FdoDestroy(
-    IN  PXENVKBD_FDO    Fdo
+    _In_ PXENVKBD_FDO   Fdo
     );
 
 #endif  // _XENVKBD_FDO_H

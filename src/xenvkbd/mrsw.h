@@ -57,7 +57,7 @@ C_ASSERT(RTL_FIELD_SIZE(XENVKBD_MRSW_LOCK, Holder) == RTL_FIELD_SIZE(XENVKBD_MRS
 
 static FORCEINLINE VOID
 InitializeMrswLock(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     LONG                    Slot;
@@ -72,7 +72,7 @@ InitializeMrswLock(
 
 static FORCEINLINE BOOLEAN
 __ClaimExclusive(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     LONG64                  Old;
@@ -85,11 +85,11 @@ __ClaimExclusive(
 }
 
 static FORCEINLINE KIRQL
-__drv_maxIRQL(APC_LEVEL)
+_IRQL_requires_max_(APC_LEVEL)
 __drv_raisesIRQL(DISPATCH_LEVEL)
 __drv_savesIRQL
 __AcquireMrswLockExclusive(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     KIRQL                   Irql;
@@ -137,12 +137,12 @@ __AcquireMrswLockExclusive(
         } while (FALSE)
 
 static FORCEINLINE VOID
-__drv_maxIRQL(DISPATCH_LEVEL)
-__drv_requiresIRQL(DISPATCH_LEVEL)
+_IRQL_requires_max_(DISPATCH_LEVEL)
+_IRQL_requires_(DISPATCH_LEVEL)
 ReleaseMrswLockExclusive(
-    IN  PXENVKBD_MRSW_LOCK          Lock,
-    IN  __drv_restoresIRQL KIRQL    Irql,
-    IN  BOOLEAN                     Shared
+    _In_ PXENVKBD_MRSW_LOCK         Lock,
+    _In_ __drv_restoresIRQL KIRQL   Irql,
+    _In_ BOOLEAN                    Shared
     )
 {
     LONG                            Slot;
@@ -180,7 +180,7 @@ ReleaseMrswLockExclusive(
 
 static FORCEINLINE LONG
 __ClaimShared(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     LONG                    Slot;
@@ -202,7 +202,7 @@ __ClaimShared(
 
 static FORCEINLINE VOID
 AcquireMrswLockShared(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     KIRQL                   Irql;
@@ -242,7 +242,7 @@ AcquireMrswLockShared(
 
 static FORCEINLINE VOID
 ReleaseMrswLockShared(
-    IN  PXENVKBD_MRSW_LOCK  Lock
+    _In_ PXENVKBD_MRSW_LOCK Lock
     )
 {
     KIRQL                   Irql;

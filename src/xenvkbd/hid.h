@@ -44,30 +44,30 @@ typedef struct _XENVKBD_HID_CONTEXT  XENVKBD_HID_CONTEXT, *PXENVKBD_HID_CONTEXT;
 
 extern NTSTATUS
 HidInitialize(
-    IN  PXENVKBD_PDO            Pdo,
-    OUT PXENVKBD_HID_CONTEXT    *Context
+    _In_ PXENVKBD_PDO               Pdo,
+    _Outptr_ PXENVKBD_HID_CONTEXT   *Context
     );
 
 extern NTSTATUS
 HidGetInterface(
-    IN      PXENVKBD_HID_CONTEXT    Context,
-    IN      ULONG                   Version,
-    IN OUT  PINTERFACE              Interface,
-    IN      ULONG                   Size
+    _In_ PXENVKBD_HID_CONTEXT   Context,
+    _In_ ULONG                  Version,
+    _Inout_ PINTERFACE          Interface,
+    _In_ ULONG                  Size
     );
 
 extern VOID
 HidTeardown(
-    IN  PXENVKBD_HID_CONTEXT    Context
+    _In_ PXENVKBD_HID_CONTEXT   Context
     );
 
 // CALLBACKS
 
 extern BOOLEAN
 HidSendReadReport(
-    IN  PXENVKBD_HID_CONTEXT    Context,
-    IN  PVOID                   Buffer,
-    IN  ULONG                   Length
+    _In_ PXENVKBD_HID_CONTEXT   Context,
+    _In_ PVOID                  Buffer,
+    _In_ ULONG                  Length
     );
 
 #endif  // _XENVKBD_VKBD_H

@@ -43,58 +43,58 @@ typedef struct _XENVKBD_RING XENVKBD_RING, *PXENVKBD_RING;
 
 extern NTSTATUS
 RingInitialize(
-    IN  PXENVKBD_FRONTEND   Frontend,
-    OUT PXENVKBD_RING       *Ring
+    _In_ PXENVKBD_FRONTEND  Frontend,
+    _Outptr_ PXENVKBD_RING  *Ring
     );
 
 extern NTSTATUS
 RingConnect(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern NTSTATUS
 RingStoreWrite(
-    IN  PXENVKBD_RING               Ring,
-    IN  PXENBUS_STORE_TRANSACTION   Transaction
+    _In_ PXENVKBD_RING              Ring,
+    _In_ PXENBUS_STORE_TRANSACTION  Transaction
     );
 
 extern NTSTATUS
 RingEnable(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern VOID
 RingDisable(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern VOID
 RingDisconnect(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern VOID
 RingTeardown(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern VOID
 RingNotify(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 extern NTSTATUS
 RingGetInputReport(
-    IN  PXENVKBD_RING   Ring,
-    IN  ULONG           ReportId,
-    IN  PVOID           Buffer,
-    IN  ULONG           Length,
-    OUT PULONG          Returned
+    _In_ PXENVKBD_RING  Ring,
+    _In_ ULONG          ReportId,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Length,
+    _Out_ PULONG        Returned
     );
 
 extern VOID
 RingReadReport(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     );
 
 #endif  // _XENVKBD_RING_H

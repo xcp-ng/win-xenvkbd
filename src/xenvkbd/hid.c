@@ -65,11 +65,11 @@ struct _XENVKBD_HID_CONTEXT {
 
 static FORCEINLINE NTSTATUS
 HidCopyBuffer(
-    IN  PVOID       Buffer,
-    IN  ULONG       Length,
-    IN  const VOID  *Source,
-    IN  ULONG       SourceLength,
-    OUT PULONG      Returned
+    _In_ PVOID      Buffer,
+    _In_ ULONG      Length,
+    _In_ const VOID *Source,
+    _In_ ULONG      SourceLength,
+    _Out_ PULONG    Returned
     )
 {
     if (Buffer == NULL)
@@ -87,7 +87,7 @@ HidCopyBuffer(
 
 static FORCEINLINE PVOID
 __HidAllocate(
-    IN  ULONG   Length
+    _In_ ULONG  Length
     )
 {
     return __AllocatePoolWithTag(NonPagedPool, Length, XENVKBD_VKBD_TAG);
@@ -95,7 +95,7 @@ __HidAllocate(
 
 static FORCEINLINE VOID
 __HidFree(
-    IN  PVOID   Buffer
+    _In_ PVOID  Buffer
     )
 {
     __FreePoolWithTag(Buffer, XENVKBD_VKBD_TAG);
@@ -103,14 +103,14 @@ __HidFree(
 
 static NTSTATUS
 HidEnable(
-    IN  PINTERFACE          Interface,
-    IN  XENHID_HID_CALLBACK Callback,
-    IN  PVOID               Argument
+    _In_ PINTERFACE             Interface,
+    _In_ XENHID_HID_CALLBACK    Callback,
+    _In_ PVOID                  Argument
     )
 {
-    PXENVKBD_HID_CONTEXT    Context = Interface->Context;
-    KIRQL                   Irql;
-    NTSTATUS                status;
+    PXENVKBD_HID_CONTEXT        Context = Interface->Context;
+    KIRQL                       Irql;
+    NTSTATUS                    status;
 
     Trace("====>\n");
 
@@ -156,7 +156,7 @@ fail1:
 
 static VOID
 HidDisable(
-    IN  PINTERFACE          Interface
+    _In_ PINTERFACE         Interface
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -190,10 +190,10 @@ done:
 
 static NTSTATUS
 HidGetDeviceAttributes(
-    IN  PINTERFACE          Interface,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -216,10 +216,10 @@ HidGetDeviceAttributes(
 
 static NTSTATUS
 HidGetDeviceDescriptor(
-    IN  PINTERFACE          Interface,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -242,10 +242,10 @@ HidGetDeviceDescriptor(
 
 static NTSTATUS
 HidGetReportDescriptor(
-    IN  PINTERFACE          Interface,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -268,11 +268,11 @@ HidGetReportDescriptor(
 
 static NTSTATUS
 HidGetString(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               Identifier,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              Identifier,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -316,11 +316,11 @@ HidGetString(
 
 static NTSTATUS
 HidGetIndexedString(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               Index,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              Index,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -348,11 +348,11 @@ done:
 
 static NTSTATUS
 HidGetFeature(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               ReportId,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              ReportId,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -380,10 +380,10 @@ done:
 
 static NTSTATUS
 HidSetFeature(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               ReportId,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              ReportId,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -410,11 +410,11 @@ done:
 
 static NTSTATUS
 HidGetInputReport(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               ReportId,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length,
-    OUT PULONG              Returned
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              ReportId,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length,
+    _Out_ PULONG            Returned
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -442,10 +442,10 @@ done:
 
 static NTSTATUS
 HidSetOutputReport(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               ReportId,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              ReportId,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -472,7 +472,7 @@ done:
 
 static VOID
 HidReadReport(
-    IN  PINTERFACE          Interface
+    _In_ PINTERFACE         Interface
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -487,10 +487,10 @@ HidReadReport(
 
 static NTSTATUS
 HidWriteReport(
-    IN  PINTERFACE          Interface,
-    IN  ULONG               ReportId,
-    IN  PVOID               Buffer,
-    IN  ULONG               Length
+    _In_ PINTERFACE         Interface,
+    _In_ ULONG              ReportId,
+    _In_ PVOID              Buffer,
+    _In_ ULONG              Length
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -544,7 +544,7 @@ done:
 
 VOID
 HidRelease(
-    IN  PINTERFACE          Interface
+    _In_ PINTERFACE         Interface
     )
 {
     PXENVKBD_HID_CONTEXT    Context = Interface->Context;
@@ -590,11 +590,11 @@ static struct _XENHID_HID_INTERFACE_V1 HidInterfaceVersion1 = {
 
 NTSTATUS
 HidInitialize(
-    IN  PXENVKBD_PDO            Pdo,
-    OUT PXENVKBD_HID_CONTEXT    *Context
+    _In_ PXENVKBD_PDO               Pdo,
+    _Outptr_ PXENVKBD_HID_CONTEXT   *Context
     )
 {
-    NTSTATUS                    status;
+    NTSTATUS                        status;
 
     Trace("====>\n");
 
@@ -620,10 +620,10 @@ fail1:
 
 NTSTATUS
 HidGetInterface(
-    IN      PXENVKBD_HID_CONTEXT    Context,
-    IN      ULONG                   Version,
-    IN OUT  PINTERFACE              Interface,
-    IN      ULONG                   Size
+    _In_ PXENVKBD_HID_CONTEXT       Context,
+    _In_ ULONG                      Version,
+    _Inout_ PINTERFACE              Interface,
+    _In_ ULONG                      Size
     )
 {
     NTSTATUS                        status;
@@ -656,7 +656,7 @@ HidGetInterface(
 
 VOID
 HidTeardown(
-    IN  PXENVKBD_HID_CONTEXT    Context
+    _In_ PXENVKBD_HID_CONTEXT   Context
     )
 {
     Trace("====>\n");
@@ -674,9 +674,9 @@ HidTeardown(
 
 BOOLEAN
 HidSendReadReport(
-    IN  PXENVKBD_HID_CONTEXT    Context,
-    IN  PVOID                   Buffer,
-    IN  ULONG                   Length
+    _In_ PXENVKBD_HID_CONTEXT   Context,
+    _In_ PVOID                  Buffer,
+    _In_ ULONG                  Length
     )
 {
     if (!Context->Enabled)

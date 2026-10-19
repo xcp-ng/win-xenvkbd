@@ -93,7 +93,7 @@ struct _XENVKBD_RING {
 
 static FORCEINLINE PVOID
 __RingAllocate(
-    IN  ULONG   Length
+    _In_ ULONG  Length
     )
 {
     return __AllocatePoolWithTag(NonPagedPool, Length, XENVKBD_RING_TAG);
@@ -101,7 +101,7 @@ __RingAllocate(
 
 static FORCEINLINE VOID
 __RingFree(
-    IN  PVOID   Buffer
+    _In_ PVOID  Buffer
     )
 {
     __FreePoolWithTag(Buffer, XENVKBD_RING_TAG);
@@ -109,11 +109,11 @@ __RingFree(
 
 static FORCEINLINE NTSTATUS
 __RingCopyBuffer(
-    IN  PVOID       Buffer,
-    IN  ULONG       Length,
-    IN  const VOID  *Source,
-    IN  ULONG       SourceLength,
-    OUT PULONG      Returned
+    _In_ PVOID      Buffer,
+    _In_ ULONG      Length,
+    _In_ const VOID *Source,
+    _In_ ULONG      SourceLength,
+    _Out_ PULONG    Returned
     )
 {
     if (Buffer == NULL)
@@ -134,9 +134,9 @@ __RingCopyBuffer(
 
 static FORCEINLINE UCHAR
 SetBit(
-    IN  UCHAR   Value,
-    IN  UCHAR   BitIdx,
-    IN  BOOLEAN Pressed
+    _In_ UCHAR      Value,
+    _In_ UCHAR      BitIdx,
+    _In_ BOOLEAN    Pressed
     )
 {
     if (Pressed) {
@@ -148,13 +148,13 @@ SetBit(
 
 static FORCEINLINE VOID
 SetArray(
-    IN  PUCHAR  Array,
-    IN  ULONG   Size,
-    IN  UCHAR   Value,
-    IN  BOOLEAN Pressed
+    _In_ PUCHAR     Array,
+    _In_ ULONG      Size,
+    _In_ UCHAR      Value,
+    _In_ BOOLEAN    Pressed
     )
 {
-    ULONG       Idx;
+    ULONG           Idx;
     if (Pressed) {
         for (Idx = 0; Idx < Size; ++Idx) {
             if (Array[Idx] == Value)
@@ -194,7 +194,7 @@ static struct _KEY_CODE_TO_USAGE KeyCodeToUsageTable[] = {
 #undef DEFINE_USAGE
 
 static VOID RingBuildKeyCodeToUsageMapping(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     ULONG               Index;
@@ -228,8 +228,8 @@ __KeyCodeToKeyName(
 
 static FORCEINLINE USHORT
 __RingKeyCodeToUsage(
-    IN  PXENVKBD_RING   Ring,
-    IN  ULONG           KeyCode
+    _In_ PXENVKBD_RING  Ring,
+    _In_ ULONG          KeyCode
     )
 {
     if (KeyCode < ARRAYSIZE(Ring->KeyCodeToUsageMapping))
@@ -240,10 +240,10 @@ __RingKeyCodeToUsage(
 
 static FORCEINLINE VOID
 __RingEventMotion(
-    IN  PXENVKBD_RING   Ring,
-    IN  LONG            dX,
-    IN  LONG            dY,
-    IN  LONG            dZ
+    _In_ PXENVKBD_RING  Ring,
+    _In_ LONG           dX,
+    _In_ LONG           dY,
+    _In_ LONG           dZ
     )
 {
     Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(Ring->AbsMouseReport.X + dX, 0, 32767);
@@ -257,9 +257,9 @@ __RingEventMotion(
 
 static FORCEINLINE VOID
 __RingEventKeypress(
-    IN  PXENVKBD_RING   Ring,
-    IN  ULONG           KeyCode,
-    IN  BOOLEAN         Pressed
+    _In_ PXENVKBD_RING  Ring,
+    _In_ ULONG          KeyCode,
+    _In_ BOOLEAN        Pressed
     )
 {
     if (KeyCode >= 0x110 && KeyCode <= 0x114) {
@@ -304,10 +304,10 @@ __RingEventKeypress(
 
 static FORCEINLINE VOID
 __RingEventPosition(
-    IN  PXENVKBD_RING   Ring,
-    IN  ULONG           X,
-    IN  ULONG           Y,
-    IN  LONG            dZ
+    _In_ PXENVKBD_RING  Ring,
+    _In_ ULONG          X,
+    _In_ ULONG          Y,
+    _In_ LONG           dZ
     )
 {
     Ring->AbsMouseReport.X = (USHORT)CONSTRAIN(X, 0, 32767);
@@ -321,7 +321,7 @@ __RingEventPosition(
 
 static VOID
 RingAcquireLock(
-    IN  PVOID       Context
+    _In_ PVOID      Context
     )
 {
     PXENVKBD_RING   Ring = Context;
@@ -330,7 +330,7 @@ RingAcquireLock(
 
 static VOID
 RingReleaseLock(
-    IN  PVOID       Context
+    _In_ PVOID      Context
     )
 {
     PXENVKBD_RING   Ring = Context;
@@ -338,17 +338,17 @@ RingReleaseLock(
     KeReleaseSpinLockFromDpcLevel(&Ring->Lock);
 }
 
-__drv_functionClass(KDEFERRED_ROUTINE)
-__drv_maxIRQL(DISPATCH_LEVEL)
-__drv_minIRQL(DISPATCH_LEVEL)
-__drv_requiresIRQL(DISPATCH_LEVEL)
-__drv_sameIRQL
+_Function_class_(KDEFERRED_ROUTINE)
+_IRQL_requires_max_(DISPATCH_LEVEL)
+_IRQL_requires_min_(DISPATCH_LEVEL)
+_IRQL_requires_(DISPATCH_LEVEL)
+_IRQL_requires_same_
 static VOID
 RingDpc(
-    IN  PKDPC       Dpc,
-    IN  PVOID       Context,
-    IN  PVOID       Argument1,
-    IN  PVOID       Argument2
+    _In_ PKDPC      Dpc,
+    _In_ PVOID      Context,
+    _In_ PVOID      Argument1,
+    _In_ PVOID      Argument2
     )
 {
     PXENVKBD_RING   Ring = Context;
@@ -436,8 +436,8 @@ KSERVICE_ROUTINE    RingEvtchnCallback;
 
 BOOLEAN
 RingEvtchnCallback(
-    IN  PKINTERRUPT     InterruptObject,
-    IN  PVOID           Argument
+    _In_ PKINTERRUPT    InterruptObject,
+    _In_ PVOID          Argument
     )
 {
     PXENVKBD_RING       Ring = Argument;
@@ -455,8 +455,8 @@ RingEvtchnCallback(
 
 static VOID
 RingDebugCallback(
-    IN  PVOID           Argument,
-    IN  BOOLEAN         Crashing
+    _In_ PVOID          Argument,
+    _In_ BOOLEAN        Crashing
     )
 {
     PXENVKBD_RING       Ring = Argument;
@@ -495,8 +495,8 @@ RingDebugCallback(
 
 NTSTATUS
 RingInitialize(
-    IN  PXENVKBD_FRONTEND   Frontend,
-    OUT PXENVKBD_RING       *Ring
+    _In_ PXENVKBD_FRONTEND  Frontend,
+    _Outptr_ PXENVKBD_RING  *Ring
     )
 {
     NTSTATUS                status;
@@ -535,7 +535,7 @@ fail1:
 
 static FORCEINLINE VOID
 RingReadFeatures(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     PCHAR               Buffer;
@@ -576,7 +576,7 @@ RingReadFeatures(
 
 NTSTATUS
 RingConnect(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     PFN_NUMBER          Pfn;
@@ -744,8 +744,8 @@ fail1:
 
 NTSTATUS
 RingStoreWrite(
-    IN  PXENVKBD_RING               Ring,
-    IN  PXENBUS_STORE_TRANSACTION   Transaction
+    _In_ PXENVKBD_RING              Ring,
+    _In_ PXENBUS_STORE_TRANSACTION  Transaction
     )
 {
     ULONG                           Port;
@@ -827,7 +827,7 @@ fail1:
 
 NTSTATUS
 RingEnable(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     Trace("=====>\n");
@@ -843,7 +843,7 @@ RingEnable(
 
 VOID
 RingDisable(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     Trace("=====>\n");
@@ -856,7 +856,7 @@ RingDisable(
 
 VOID
 RingDisconnect(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     Trace("=====>\n");
@@ -908,7 +908,7 @@ RingDisconnect(
 
 VOID
 RingTeardown(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     Trace("=====>\n");
@@ -950,7 +950,7 @@ RingTeardown(
 
 VOID
 RingNotify(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     if (KeInsertQueueDpc(&Ring->Dpc, NULL, NULL))
@@ -959,11 +959,11 @@ RingNotify(
 
 NTSTATUS
 RingGetInputReport(
-    IN  PXENVKBD_RING   Ring,
-    IN  ULONG           ReportId,
-    IN  PVOID           Buffer,
-    IN  ULONG           Length,
-    OUT PULONG          Returned
+    _In_ PXENVKBD_RING  Ring,
+    _In_ ULONG          ReportId,
+    _In_ PVOID          Buffer,
+    _In_ ULONG          Length,
+    _Out_ PULONG        Returned
     )
 {
     switch (ReportId) {
@@ -986,7 +986,7 @@ RingGetInputReport(
 
 VOID
 RingReadReport(
-    IN  PXENVKBD_RING   Ring
+    _In_ PXENVKBD_RING  Ring
     )
 {
     // Check for pending reports, push 1 pending report to subscriber
