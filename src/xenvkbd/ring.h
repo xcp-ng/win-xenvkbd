@@ -49,7 +49,7 @@ RingInitialize(
 
 extern NTSTATUS
 RingConnect(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern NTSTATUS
@@ -60,41 +60,41 @@ RingStoreWrite(
 
 extern NTSTATUS
 RingEnable(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern VOID
 RingDisable(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern VOID
 RingDisconnect(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern VOID
 RingTeardown(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern VOID
 RingNotify(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 extern NTSTATUS
 RingGetInputReport(
-    _In_ PXENVKBD_RING  Ring,
-    _In_ ULONG          ReportId,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Length,
-    _Out_ PULONG        Returned
+    _In_ PXENVKBD_RING                      Ring,
+    _In_ ULONG                              ReportId,
+    _Out_writes_bytes_opt_(Length) PVOID    Buffer,
+    _In_ ULONG                              Length,
+    _Out_ PULONG                            Returned
     );
 
 extern VOID
 RingReadReport(
-    _In_ PXENVKBD_RING  Ring
+    _Inout_ PXENVKBD_RING   Ring
     );
 
 #endif  // _XENVKBD_RING_H

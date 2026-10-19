@@ -57,14 +57,14 @@ FdoGetName(
 
 extern NTSTATUS
 FdoAddPhysicalDeviceObject(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PXENVKBD_PDO       Pdo
     );
 
 extern VOID
 FdoRemovePhysicalDeviceObject(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PXENVKBD_PDO   Pdo
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PXENVKBD_PDO       Pdo
     );
 
 extern VOID
@@ -74,7 +74,7 @@ FdoAcquireMutex(
 
 extern VOID
 FdoReleaseMutex(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     );
 
 extern PDEVICE_OBJECT
@@ -124,8 +124,8 @@ FdoDelegateIrp(
 
 extern NTSTATUS
 FdoDispatch(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PIRP           Irp
+    _Inout_ PXENVKBD_FDO    Fdo,
+    _In_ PIRP               Irp
     );
 
 #define DECLARE_FDO_GET_INTERFACE(_Interface, _Type)    \
@@ -150,7 +150,7 @@ FdoCreate(
 
 extern VOID
 FdoDestroy(
-    _In_ PXENVKBD_FDO   Fdo
+    _Inout_ PXENVKBD_FDO    Fdo
     );
 
 #endif  // _XENVKBD_FDO_H

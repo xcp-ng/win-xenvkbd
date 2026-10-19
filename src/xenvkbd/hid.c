@@ -65,11 +65,11 @@ struct _XENVKBD_HID_CONTEXT {
 
 static FORCEINLINE NTSTATUS
 HidCopyBuffer(
-    _In_ PVOID      Buffer,
-    _In_ ULONG      Length,
-    _In_ const VOID *Source,
-    _In_ ULONG      SourceLength,
-    _Out_ PULONG    Returned
+    _Out_writes_bytes_opt_(Length) PVOID    Buffer,
+    _In_ ULONG                              Length,
+    _In_ const VOID                         *Source,
+    _In_ ULONG                              SourceLength,
+    _Out_ PULONG                            Returned
     )
 {
     if (Buffer == NULL)
@@ -656,7 +656,7 @@ HidGetInterface(
 
 VOID
 HidTeardown(
-    _In_ PXENVKBD_HID_CONTEXT   Context
+    _Inout_ PXENVKBD_HID_CONTEXT    Context
     )
 {
     Trace("====>\n");
