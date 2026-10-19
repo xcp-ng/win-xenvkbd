@@ -170,8 +170,10 @@ SetArray(
                 break;
             if (Array[Idx] != Value)
                 continue;
-            for (; Idx < Size - 1; ++Idx)
+            for (; Idx < Size - 1; ++Idx) {
+                ASSERT3U(Idx + 1, <, Size);
                 Array[Idx] = Array[Idx + 1];
+            }
             Array[Size - 1] = 0;
             break;
         }
