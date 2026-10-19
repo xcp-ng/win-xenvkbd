@@ -47,7 +47,7 @@ RegistryTeardown(
 
 extern NTSTATUS
 RegistryOpenKey(
-    _In_ HANDLE             Parent,
+    _In_opt_ HANDLE         Parent,
     _In_ PUNICODE_STRING    Path,
     _In_ ACCESS_MASK        DesiredAccess,
     _Out_ PHANDLE           Key
@@ -55,7 +55,7 @@ RegistryOpenKey(
 
 extern NTSTATUS
 RegistryCreateKey(
-    _In_ HANDLE             Parent,
+    _In_opt_ HANDLE         Parent,
     _In_ PUNICODE_STRING    Path,
     _In_ ULONG              Options,
     _Out_ PHANDLE           Key
@@ -96,7 +96,7 @@ RegistryOpenSubKey(
 
 extern NTSTATUS
 RegistryCreateSubKey(
-    _In_ HANDLE     Key,
+    _In_opt_ HANDLE Key,
     _In_ PSTR       Name,
     _In_ ULONG      Options,
     _Out_ PHANDLE   SubKey
@@ -160,10 +160,10 @@ RegistryQueryBinaryValue(
 
 extern NTSTATUS
 RegistryUpdateBinaryValue(
-    _In_ HANDLE                       Key,
-    _In_ PSTR                         Name,
-    _In_reads_bytes_(Length) PVOID    Buffer,
-    _In_ ULONG                        Length
+    _In_ HANDLE                     Key,
+    _In_ PSTR                       Name,
+    _In_reads_bytes_(Length) PVOID  Buffer,
+    _In_ ULONG                      Length
     );
 
 extern NTSTATUS

@@ -160,7 +160,7 @@ _IsZeroMemory(
     _In_ ULONG                      Length
     )
 {
-    ULONG           Offset;
+    ULONG                           Offset;
 
     Offset = 0;
     while (Offset < Length) {

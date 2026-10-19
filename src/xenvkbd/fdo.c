@@ -370,14 +370,14 @@ FdoTranslateBusAddress(
 
 ULONG
 FdoSetBusData(
-    _In_ PXENVKBD_FDO                      Fdo,
-    _In_ ULONG                             DataType,
-    _Inout_updates_bytes_(Length) PVOID    Buffer,
-    _In_ ULONG                             Offset,
-    _In_ ULONG                             Length
+    _In_ PXENVKBD_FDO                   Fdo,
+    _In_ ULONG                          DataType,
+    _Inout_updates_bytes_(Length) PVOID Buffer,
+    _In_ ULONG                          Offset,
+    _In_ ULONG                          Length
     )
 {
-    PBUS_INTERFACE_STANDARD BusInterface;
+    PBUS_INTERFACE_STANDARD             BusInterface;
 
     BusInterface = Fdo->LowerBusInterface;
     ASSERT(BusInterface != NULL);
@@ -391,14 +391,14 @@ FdoSetBusData(
 
 ULONG
 FdoGetBusData(
-    _In_ PXENVKBD_FDO                      Fdo,
-    _In_ ULONG                             DataType,
-    _Inout_updates_bytes_(Length) PVOID    Buffer,
-    _In_ ULONG                             Offset,
-    _In_ ULONG                             Length
+    _In_ PXENVKBD_FDO                   Fdo,
+    _In_ ULONG                          DataType,
+    _Inout_updates_bytes_(Length) PVOID Buffer,
+    _In_ ULONG                          Offset,
+    _In_ ULONG                          Length
     )
 {
-    PBUS_INTERFACE_STANDARD BusInterface;
+    PBUS_INTERFACE_STANDARD             BusInterface;
 
     BusInterface = Fdo->LowerBusInterface;
     ASSERT(BusInterface != NULL);
@@ -715,16 +715,16 @@ FdoReleaseMutex(
 
 static FORCEINLINE BOOLEAN
 __FdoEnumerate(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ PANSI_STRING   Devices
+    _In_ PXENVKBD_FDO           Fdo,
+    _Inout_opt_ PANSI_STRING    Devices
     )
 {
-    BOOLEAN             NeedInvalidate;
-    HANDLE              ParametersKey;
-    ULONG               Enumerate;
-    PLIST_ENTRY         ListEntry;
-    ULONG               Index;
-    NTSTATUS            status;
+    BOOLEAN                     NeedInvalidate;
+    HANDLE                      ParametersKey;
+    ULONG                       Enumerate;
+    PLIST_ENTRY                 ListEntry;
+    ULONG                       Index;
+    NTSTATUS                    status;
 
     Trace("====>\n");
 
@@ -2902,19 +2902,19 @@ FdoDispatch(
 _IRQL_requires_(PASSIVE_LEVEL)
 static NTSTATUS
 FdoQueryInterface(
-    _In_ PXENVKBD_FDO   Fdo,
-    _In_ const GUID     *Guid,
-    _In_ ULONG          Version,
-    _Out_ PINTERFACE    Interface,
-    _In_ ULONG          Size,
-    _In_ BOOLEAN        Optional
+    _In_ PXENVKBD_FDO                       Fdo,
+    _In_ const GUID                         *Guid,
+    _In_ ULONG                              Version,
+    _Inout_updates_bytes_(Size) PINTERFACE  Interface,
+    _In_ ULONG                              Size,
+    _In_ BOOLEAN                            Optional
     )
 {
-    KEVENT              Event;
-    IO_STATUS_BLOCK     StatusBlock;
-    PIRP                Irp;
-    PIO_STACK_LOCATION  StackLocation;
-    NTSTATUS            status;
+    KEVENT                                  Event;
+    IO_STATUS_BLOCK                         StatusBlock;
+    PIRP                                    Irp;
+    PIO_STACK_LOCATION                      StackLocation;
+    NTSTATUS                                status;
 
     ASSERT3U(KeGetCurrentIrql(), ==, PASSIVE_LEVEL);
 
