@@ -1240,10 +1240,10 @@ fail1:
 
 NTSTATUS
 RegistryUpdateBinaryValue(
-    _In_ HANDLE                     Key,
-    _In_ PSTR                       Name,
-    _In_ PVOID                      Buffer,
-    _In_ ULONG                      Length
+    _In_ HANDLE                       Key,
+    _In_ PSTR                         Name,
+    _In_reads_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                        Length
     )
 {
     ANSI_STRING                     Ansi;

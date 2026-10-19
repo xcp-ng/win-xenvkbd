@@ -487,11 +487,11 @@ PdoTranslateBusAddress(
 
 ULONG
 PdoSetBusData(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ ULONG          DataType,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Offset,
-    _In_ ULONG          Length
+    _In_ PXENVKBD_PDO                      Pdo,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     )
 {
     Trace("<===>\n");
@@ -505,11 +505,11 @@ PdoSetBusData(
 
 ULONG
 PdoGetBusData(
-    _In_ PXENVKBD_PDO   Pdo,
-    _In_ ULONG          DataType,
-    _In_ PVOID          Buffer,
-    _In_ ULONG          Offset,
-    _In_ ULONG          Length
+    _In_ PXENVKBD_PDO                      Pdo,
+    _In_ ULONG                             DataType,
+    _Inout_updates_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                             Offset,
+    _In_ ULONG                             Length
     )
 {
     Trace("<===>\n");

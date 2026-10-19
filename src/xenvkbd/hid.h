@@ -65,9 +65,9 @@ HidTeardown(
 
 extern BOOLEAN
 HidSendReadReport(
-    _In_ PXENVKBD_HID_CONTEXT   Context,
-    _In_ PVOID                  Buffer,
-    _In_ ULONG                  Length
+    _In_ PXENVKBD_HID_CONTEXT         Context,
+    _In_reads_bytes_(Length) PVOID    Buffer,
+    _In_ ULONG                        Length
     );
 
 #endif  // _XENVKBD_VKBD_H
