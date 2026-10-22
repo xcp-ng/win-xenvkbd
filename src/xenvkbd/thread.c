@@ -37,7 +37,7 @@
 #include "assert.h"
 #include "util.h"
 
-#define THREAD_POOL 'ERHT'
+#define THREAD_TAG 'ERHT'
 
 struct _XENVKBD_THREAD {
     XENVKBD_THREAD_FUNCTION Function;
@@ -53,7 +53,7 @@ __ThreadAllocate(
     _In_ ULONG  Length
     )
 {
-    return __AllocatePoolWithTag(NonPagedPool, Length, THREAD_POOL);
+    return __AllocatePoolWithTag(NonPagedPool, Length, THREAD_TAG);
 }
 
 static FORCEINLINE VOID
@@ -61,7 +61,7 @@ __ThreadFree(
     _In_ PVOID  Buffer
     )
 {
-    __FreePoolWithTag(Buffer, THREAD_POOL);
+    __FreePoolWithTag(Buffer, THREAD_TAG);
 }
 
 static FORCEINLINE VOID
